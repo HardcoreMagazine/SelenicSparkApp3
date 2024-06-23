@@ -38,6 +38,10 @@ namespace PostsService.Data.Migrations
                     b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Text")
+                        .HasMaxLength(24000)
+                        .HasColumnType("character varying(24000)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -46,25 +50,6 @@ namespace PostsService.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("PostsService.Models.PostDetails", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("PostID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("PostDetails");
                 });
 #pragma warning restore 612, 618
         }

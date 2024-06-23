@@ -6,9 +6,19 @@ namespace PostsService.Models
     {
         public int ID { get; set; }
         [StringLength(256)]
-        public required string Title { get; set; }
+        public string Title { get; set; } // not nullable
         [StringLength(64)]
-        public required string Author { get; set; }
+        public string Author { get; set; } // not nullable
+        [StringLength(24000)]
+        public string? Text {  get; set; } // nullable
         public DateTimeOffset DateCreated { get; set; }
+
+        public static bool Validate(Post post)
+        {
+            if (string.IsNullOrWhiteSpace(post.Title) || string.IsNullOrWhiteSpace(post.Author))
+                return false;
+            else
+                return true;
+        }
     }
 }

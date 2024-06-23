@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Frontend\frontend.esproj" />
+    <ProjectReference Include="..\ProjectShared\SharedLib.csproj" />
   </ItemGroup>
 
 </Project>
