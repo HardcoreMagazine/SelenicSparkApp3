@@ -24,7 +24,7 @@ namespace PostsService.Controllers
         {
             try
             {
-                return _appDbContext.Posts.ToList();
+                return _appDbContext.Posts.Where(p => p.Enabled).ToList();
             }
             catch (Npgsql.PostgresException ex)
             {
@@ -33,17 +33,18 @@ namespace PostsService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.Source}");
+                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
                 return new List<Post>();
             }
         }
 
         [HttpGet("{id:int}")]
-        public Post Get(int id)
+        public Post GetID(int id)
         {
             try
             {
-                var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id) ?? throw new Exception($"Post Not Found: {id}");
+                var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled) 
+                    ?? throw new Exception($"Post id=\"{id}\" not found");
                 return post;
             }
             catch (Npgsql.PostgresException ex)
@@ -53,7 +54,7 @@ namespace PostsService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.Source}");
+                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
                 return new Post();
             }
         }
@@ -61,24 +62,88 @@ namespace PostsService.Controllers
         [HttpPost]
         public int CreatePost(Post post)
         {
-            if (!Post.Validate(post))
-                return (int)SharedLib.ErrorTypes.ClientFail; // bad request body
+            if (!Post.Validate(post) || !post.Enabled)
+                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
 
             try
             {
                 _appDbContext.Posts.Add(post);
                 _appDbContext.SaveChanges();
-                return post.ID; // id is returned on insertion
+                return post.ID; // id is returned after insertion
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.ErrorTypes.ServerFail;
+                return (int)SharedLib.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.Source}");
-                return (int)SharedLib.ErrorTypes.ServerFail;
+                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
+                return (int)SharedLib.StatusCodes.ServerFail;
+            }
+        }
+
+        [HttpDelete]
+        public int Delete(int id)
+        {
+            var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled);
+
+            if (post != null && Post.Validate(post))
+            {
+                post.Enabled = false;
+                try
+                {
+                    _appDbContext.Posts.Update(post);
+                    _appDbContext.SaveChanges();
+                    return (int)SharedLib.StatusCodes.Ok;
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                    return (int)SharedLib.StatusCodes.ServerFail;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
+                    return (int)SharedLib.StatusCodes.ServerFail;
+                }
+            }
+            else
+            {
+                return (int)SharedLib.StatusCodes.ClientFail;
+            }
+        }
+
+        [HttpPut]
+        public int Update(Post post)
+        {
+            if (!Post.Validate(post) || !post.Enabled)
+            {
+                return (int)SharedLib.StatusCodes.ClientFail;
+            }
+            else
+            {
+                try
+                {
+                    // safe update: automatically block all attempts to change "Author", "CreateDate", "Enabled" fields
+                    var postOld = _appDbContext.Posts.First(p => p.ID == post.ID);
+                    postOld.Text = post.Text;
+                    postOld.Title = post.Title;
+
+                    _appDbContext.Posts.Update(postOld);
+                    _appDbContext.SaveChanges();
+                    return postOld.ID;
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                    return (int)SharedLib.StatusCodes.ServerFail;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.StackTrace}");
+                    return (int)SharedLib.StatusCodes.ServerFail;
+                }
             }
         }
     }

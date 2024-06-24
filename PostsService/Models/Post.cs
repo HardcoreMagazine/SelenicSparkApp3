@@ -12,6 +12,7 @@ namespace PostsService.Models
         [StringLength(24000)]
         public string? Text {  get; set; } // nullable
         public DateTimeOffset DateCreated { get; set; }
+        public bool Enabled { get; set; } = true; // if "true" then visible, else hidden ("deleted")
 
         public static bool Validate(Post post)
         {

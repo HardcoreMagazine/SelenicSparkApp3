@@ -38,6 +38,9 @@ namespace PostsService.Data.Migrations
                     b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Text")
                         .HasMaxLength(24000)
                         .HasColumnType("character varying(24000)");

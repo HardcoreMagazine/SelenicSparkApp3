@@ -13,6 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService", "AuthService\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F748E3C6-587F-464F-AE6A-F722A0C7F75E}"
 	ProjectSection(SolutionItems) = preProject
+		installTestDb.sql = installTestDb.sql
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection

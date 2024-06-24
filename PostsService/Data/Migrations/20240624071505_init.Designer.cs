@@ -12,7 +12,7 @@ using PostsService.Data;
 namespace PostsService.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240623102054_init")]
+    [Migration("20240624071505_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -40,6 +40,9 @@ namespace PostsService.Data.Migrations
 
                     b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Text")
                         .HasMaxLength(24000)

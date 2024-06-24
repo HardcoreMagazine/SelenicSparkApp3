@@ -21,7 +21,8 @@ namespace PostsService.Data.Migrations
                     Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Author = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Text = table.Column<string>(type: "character varying(24000)", maxLength: 24000, nullable: true),
-                    DateCreated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    DateCreated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
