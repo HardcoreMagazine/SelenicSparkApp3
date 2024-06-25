@@ -1,4 +1,4 @@
-# SelenicSparkApp V3
+# SelenicSparkApp3
 
 
 ### now with extra salt and microservices!

@@ -1,14 +1,14 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
-import Posts from './components/Posts'
+import Posts from './components/Posts/Posts'
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Home />} />
           <Route path="/posts" element={<Posts />} />
         </Routes>
       </Router>

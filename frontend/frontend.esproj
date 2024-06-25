@@ -9,6 +9,10 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\components\" />
+    <None Remove=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\assets\" />
+    <Folder Include="src\components\Users\" />
   </ItemGroup>
 </Project>
