@@ -28,8 +28,8 @@ function Home() {
           </div>
         </div>
       </nav>
-      <main>
-        <div className="border h-fit">
+      <main className="flex h-screen justify-center items-center">
+        <div>
           <ul>
             <li className="mt-3">
               A work-in-progress .NET 8 + ReactTS application created with microservice architecture in mind
