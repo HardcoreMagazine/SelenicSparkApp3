@@ -4,12 +4,12 @@ function Home() {
   return (
     <>
       <nav className="bg-gradient-to-b from-slate-950 to-indigo-900">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between p-3">
+        <div className="flex items-center justify-between p-3 mx-8">
           <Link to="/">
             <div className="inline-flex">
               <img src="./public/logo.png" className="h-8" alt="SelenicSpark3 Logo" />
               &nbsp;
-              <span className="self-center text-2xl font-semibold whitespace-nowrap text-">SelenicSpark3</span>
+              <span className="text-2xl font-semibold">SelenicSpark3</span>
             </div>
           </Link>
           <div>
@@ -24,7 +24,7 @@ function Home() {
           </div>
         </div>
       </nav>
-      <main className="flex h-screen justify-center items-center">
+      <main className="flex justify-center items-center">
         <div>
           <ul>
             <li className="mt-3">
@@ -48,7 +48,7 @@ function Home() {
         </div>
       </main>
       <footer>
-        <div className="w-full flex flex-wrap items-center p-4 bg-gradient-to-t from-slate-950 to-indigo-900">
+        <div className="w-full flex flex-wrap items-center p-4 bg-gradient-to-t from-slate-950 to-indigo-900 justify-between">
           <ul className="inline-flex space-x-10">
             <li>
               <Link to="/">
