@@ -1,4 +1,4 @@
-function Posts() {
+function Register() {
   return (
     <div>
       placeholder
@@ -6,4 +6,4 @@ function Posts() {
   );
 }
 
-export default Posts;
+export default Register;
