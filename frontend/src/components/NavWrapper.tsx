@@ -48,6 +48,9 @@ function NavWrapper() {
               <li>
                 <Link to="/privacy">Privacy</Link>
               </li>
+              <li>
+                <Link to="/tos">Terms of Service</Link>
+              </li>
             </ul>
           </div>
         </footer>

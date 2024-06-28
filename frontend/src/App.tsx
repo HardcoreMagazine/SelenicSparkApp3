@@ -6,6 +6,8 @@ import Privacy from './components/Privacy'
 import NavWrapper from './components/NavWrapper'
 import Register from './components/Auth/Register'
 import Signin from './components/Auth/Signin'
+import ResetPassword from './components/Auth/ResetPassword'
+import TermsOfService from './components/TermsOfService'
 
 function App() {
   return (
@@ -17,9 +19,11 @@ function App() {
             <Route path="/about" element={<Home />} />
             <Route path="/posts" element={<Posts />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/tos" element={<TermsOfService />} />
 
             <Route path="/register" element={<Register />} />
             <Route path="/signin" element={<Signin />} />
+            <Route path="resetpassword" element={<ResetPassword />} />
           </Route>
         </Routes>
       </Router>
