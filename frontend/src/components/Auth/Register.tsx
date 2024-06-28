@@ -7,7 +7,7 @@ function Register() {
         <div className="w-full max-w-md bg-gray-800 border-gray-700 rounded-md">
           <div className="p-9 space-y-4">
             <form className="space-y-4 md:space-y-6">
-              <input type="text" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Public Username" required="true" />
+              <input type="text" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Username" required="true" />
               <input type="email" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="E-mail" required="true" />
               <input type="password" placeholder="Password" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="true" />
               <input type="date" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required="true" />
