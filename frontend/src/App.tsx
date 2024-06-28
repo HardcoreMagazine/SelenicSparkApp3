@@ -5,7 +5,7 @@ import Posts from './components/Posts/Posts'
 import Privacy from './components/Privacy'
 import NavWrapper from './components/NavWrapper'
 import Register from './components/Auth/Register'
-import Signin from './components/Auth/Signin'
+import Signin from './components/Auth/SignIn'
 import ResetPassword from './components/Auth/ResetPassword'
 import TermsOfService from './components/TermsOfService'
 
