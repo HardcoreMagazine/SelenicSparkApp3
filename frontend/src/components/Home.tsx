@@ -1,7 +1,7 @@
 function Home() {
   return (
     <>
-      <div className="mt-52 font-light">
+      <div className="">
         <ul>
           <li className="mt-3">
             A work-in-progress .NET 8 + ReactTS application created with microservice architecture in mind

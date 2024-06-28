@@ -28,7 +28,7 @@ function NavWrapper() {
             </div>
           </div>
         </nav>
-        <main className="flex-grow">
+        <main className="flex-grow content-center">
           <Outlet />
         </main>
         <footer className="">
