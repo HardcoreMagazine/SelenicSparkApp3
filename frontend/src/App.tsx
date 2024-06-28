@@ -5,7 +5,7 @@ import Posts from './components/Posts/Posts'
 import Privacy from './components/Privacy'
 import NavWrapper from './components/NavWrapper'
 import Register from './components/Auth/Register'
-import Login from './components/Auth/Login'
+import Signin from './components/Auth/Signin'
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
 
             <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/signin" element={<Signin />} />
           </Route>
         </Routes>
       </Router>

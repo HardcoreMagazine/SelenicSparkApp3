@@ -1,6 +1,8 @@
 function Privacy() {
   return (
-    <p>Hello world!</p>
+    <div>
+      placeholder
+    </div>
   );
 }
 

@@ -13,7 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\assets\" />
-    <Folder Include="src\components\Auth\" />
     <Folder Include="src\components\Users\" />
   </ItemGroup>
 </Project>

@@ -22,7 +22,7 @@ function NavWrapper() {
                   <Link to="/posts">Posts</Link>
                 </li>
                 <li>
-                  <Link to="/login">Login</Link>
+                  <Link to="/signin">Sign In</Link>
                 </li>
               </ul>
             </div>
@@ -31,9 +31,9 @@ function NavWrapper() {
         <main className="flex-grow content-center">
           <Outlet />
         </main>
-        <footer className="">
+        <footer>
           <div className="w-full flex flex-wrap items-center p-4 bg-gradient-to-t from-slate-950 to-indigo-900 justify-between">
-            <ul className="inline-flex space-x-10">
+            <ul className="mx-6 inline-flex space-x-10">
               <li>
                 <Link to="/">
                   <span className="self-center whitespace-nowrap">&copy; 2024 SelenicSpark3</span>
