@@ -7,7 +7,8 @@ using modern tech stack: .NET 8 WebAPI (OpenAPI) + Docker, ReactTS + Vite + Tail
 
 ## Features:
 
-TBA
++ Add short README for each sub-project
++ TBA
 
 ## Suspended features:
 
