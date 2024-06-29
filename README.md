@@ -7,16 +7,16 @@ using modern tech stack: .NET 8 WebAPI (OpenAPI) + Docker, ReactTS + Vite + Tail
 
 ## Features:
 
-+ Add short README for each sub-project
-+ TBA
+TBA
 
 ## Suspended features:
 
 TBA?
 
-## Planned additional features:
+## Planned features:
 
-TBA?
++ Add short README for each sub-project
++ TBA
 
 ## Program architecture && logic:
 
