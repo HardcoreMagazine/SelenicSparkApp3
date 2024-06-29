@@ -15,7 +15,7 @@ TBA?
 
 TBA?
 
-## Program architecture/logic:
+## Program architecture && logic:
 
 TBA (add pictures here)
 
