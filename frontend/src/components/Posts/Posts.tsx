@@ -36,7 +36,7 @@ function Posts() {
   return someContent;
 
   async function populateCollection() {
-    const res = await fetch('/post');
+    const res = await fetch('https://localhost:46801/post');
     const data = await res.json();
     setPosts(data);
     //fetch('/post')
