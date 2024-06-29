@@ -3,7 +3,7 @@
 SelenicSpark3 is a third and a final generation of my home-made ready to deploy web forum/blog app created 
 using modern tech stack: .NET 8 WebAPI (OpenAPI) + Docker, ReactTS + Vite + TailwindCSS. 
 
-# WORK IN PROGRESS*
+# WORK IN PROGRESS
 
 ## Features:
 
