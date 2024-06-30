@@ -1,14 +1,15 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Home from './components/Home'
-import Posts from './components/Posts/Posts'
-import Privacy from './components/Privacy'
-import NavWrapper from './components/NavWrapper'
-import Register from './components/Auth/Register'
-import Signin from './components/Auth/SignIn'
-import ResetPassword from './components/Auth/ResetPassword'
-import TermsOfService from './components/TermsOfService'
+import Home from './components/Shared/Home'
+import Privacy from './components/Shared/Privacy'
+import NavWrapper from './components/Shared/NavWrapper'
+import TermsOfService from './components/Shared/TermsOfService'
 
+import Signin from './components/Auth/SignIn'
+import Register from './components/Auth/Register'
+import ResetPassword from './components/Auth/ResetPassword'
+
+import Posts from './components/Posts/Posts'
 function App() {
   return (
     <>

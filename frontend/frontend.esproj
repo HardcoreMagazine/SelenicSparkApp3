@@ -17,6 +17,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\components\Users\" />
-    <Folder Include="src\components\Users\" />
   </ItemGroup>
 </Project>

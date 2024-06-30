@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { IPost } from './IPost'
+import { format, parseISO } from 'date-fns'
 
 function Posts() {
   const [posts, setPosts] = useState<IPost[]>();
@@ -23,7 +24,13 @@ function Posts() {
   async function populateCollection() {
     const res = await fetch('https://localhost:46801/post');
     const data: IPost[] = await res.json();
+    data.forEach(post => post.dateCreated = formatDtString(post.dateCreated));
     setPosts(data); 
+  }
+
+  function formatDtString(dts: string): string {
+    const parsedDt = parseISO(dts);
+    return format(parsedDt, "dd.MM.yyyy HH:mm 'UTC'")
   }
 }
 
