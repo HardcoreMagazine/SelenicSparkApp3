@@ -9,10 +9,14 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="src\assets\**" />
+    <TypeScriptConfiguration Remove="src\assets\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\assets\" />
+    <Folder Include="src\components\Users\" />
     <Folder Include="src\components\Users\" />
   </ItemGroup>
 </Project>

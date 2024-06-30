@@ -24,7 +24,10 @@ namespace PostsService.Controllers
         {
             try
             {
-                return _appDbContext.Posts.Where(p => p.Enabled).ToList();
+                return _appDbContext.Posts
+                    .Where(p => p.Enabled)
+                    .OrderBy(p => p.ID)
+                    .ToList();
             }
             catch (Npgsql.PostgresException ex)
             {

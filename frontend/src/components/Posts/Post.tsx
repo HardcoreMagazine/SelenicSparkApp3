@@ -1,6 +1,8 @@
-function Post(id: number) {
+function Post(ID: number) {
   return (
-    <p>Hello world!</p>
+    <>
+      placeholder for { ID }
+    </>
   );
 }
 
