@@ -7,7 +7,7 @@ function Posts() {
 
   useEffect(() => { 
     populateCollection();
-  });
+  }, []); // when "[]" is not specified - program fetches data every 0.5s
 
   const pageContent = posts === undefined ? <h1>Loading, please wait</h1> : (
     <ul>

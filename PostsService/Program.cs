@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using PostsService.Data;
 
+
+//TODO: https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-8.0
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
