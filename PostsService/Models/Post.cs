@@ -4,8 +4,10 @@ namespace PostsService.Models
 {
     public class Post
     {
+        private const int MinPostTitleLen = 15;
+
         public int ID { get; set; }
-        [StringLength(256)]
+        [StringLength(maximumLength: 256, MinimumLength = MinPostTitleLen)]
         public string Title { get; set; } // not nullable
         [StringLength(64)]
         public string Author { get; set; } // not nullable
@@ -16,7 +18,8 @@ namespace PostsService.Models
 
         public static bool Validate(Post post)
         {
-            if (string.IsNullOrWhiteSpace(post.Title) || string.IsNullOrWhiteSpace(post.Author))
+            if (string.IsNullOrWhiteSpace(post.Title) || string.IsNullOrWhiteSpace(post.Author) 
+                || post.Title.Length < MinPostTitleLen)
                 return false;
             else
                 return true;

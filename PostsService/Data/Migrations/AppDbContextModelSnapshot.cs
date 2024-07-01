@@ -52,7 +52,7 @@ namespace PostsService.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 #pragma warning restore 612, 618
         }

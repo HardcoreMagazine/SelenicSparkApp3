@@ -13,23 +13,25 @@ function Posts() {
   const mainPageContent = posts === undefined ? (
     <h1>Loading, please wait</h1>
   ) : (
-    <ul className="space-y-6">
+    <ul className="space-x-10 mx-16">
       {posts.length > 0 && (
         posts.map(post => 
-          <li key={post.id} className="border-2 border-indigo-800 py-6 mx-12 bg-opacity-10 bg-slate-500 rounded-md">
-            <Link to={"/post/"+post.id} className="break-all flex mx-10">
-              {post.title}
-            </Link>
-            <span className="text-xs font-light flex justify-between mx-32 mt-6">
-              <p>
-                {post.dateCreated} @ by <span className="text-blue-400">{post.author}</span>
-              </p>              
-              <p>
-                &lt;user reactions placeholder&gt; 
-                &lt;user comments placeholder&gt;
-              </p>
-            </span>
-          </li>
+          <Link to={"/post/"+post.id} key={post.id} target="_blank">
+            <li key={post.id} className="border-2 border-indigo-800 py-6 bg-opacity-10 bg-slate-500 rounded-md">
+              <h2 className="break-all flex mx-10">
+                {post.title}
+              </h2>
+              <span className="text-xs font-light flex justify-between mx-32 mt-6">
+                <p>
+                  On <span className="font-medium">{post.dateCreated}</span> @ by <span className="font-medium">{post.author}</span>
+                </p>              
+                <p className="font-medium">
+                  &lt;user reactions placeholder&gt; 
+                  &lt;user comments placeholder&gt;
+                </p>
+              </span>
+            </li>
+          </Link>
         )
       )}
       {(posts.length === 0) && (
