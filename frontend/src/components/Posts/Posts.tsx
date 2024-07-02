@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { IPost } from './IPost'
-import { format, parseISO } from 'date-fns'
 import { Link } from 'react-router-dom'
+import { formatDtString } from '../Shared/FuncFormatDtString'
 
 function Posts() {
   const [posts, setPosts] = useState<IPost[]>();
@@ -18,7 +18,7 @@ function Posts() {
         posts.map(post => 
           <Link to={"/post/"+post.id} key={post.id} target="_blank">
             <li key={post.id} className="border-2 border-indigo-800 py-6 bg-opacity-10 bg-slate-500 rounded-md">
-              <h2 className="break-all flex mx-10">
+              <h2 className="break-all mx-10 text-start text-xl">
                 {post.title}
               </h2>
               <span className="text-xs font-light flex justify-between mx-32 mt-6">
@@ -59,11 +59,6 @@ function Posts() {
     const data: IPost[] = await res.json();
     data.forEach(post => post.dateCreated = formatDtString(post.dateCreated));
     setPosts(data);
-  }
-
-  function formatDtString(dts: string): string {
-    const parsedDt = parseISO(dts);
-    return format(parsedDt, "dd.MM.yyyy HH:mm 'UTC'")
   }
 }
 

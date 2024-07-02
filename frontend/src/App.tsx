@@ -10,6 +10,7 @@ import Register from './components/Auth/Register'
 import ResetPassword from './components/Auth/ResetPassword'
 
 import Posts from './components/Posts/Posts'
+import Post from './components/Posts/Post'
 function App() {
   return (
     <>
@@ -18,9 +19,11 @@ function App() {
           <Route element={<NavWrapper />}>
             <Route path="*" element={<Home />} />
             <Route path="/about" element={<Home />} />
-            <Route path="/posts" element={<Posts />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/tos" element={<TermsOfService />} />
+
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/post/:id" element={<Post />}   />
 
             <Route path="/register" element={<Register />} />
             <Route path="/signin" element={<Signin />} />

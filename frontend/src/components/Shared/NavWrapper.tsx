@@ -8,7 +8,7 @@ function NavWrapper() {
           <div className="flex items-center justify-between p-3 mx-8">
             <Link to="/">
               <div className="inline-flex">
-                <img src="./public/logo.png" className="h-8" alt="SelenicSpark3 Logo" />
+                <img src="/logo.png" className="h-8" alt="SelenicSpark3 Logo" />
                 &nbsp;
                 <span className="text-2xl font-semibold">SelenicSpark3</span>
               </div>
