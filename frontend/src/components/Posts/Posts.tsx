@@ -43,7 +43,7 @@ function Posts() {
   return (
     <>
       <div className="mt-12">
-        <button className="">Create new placeholder</button>
+        <Link to="/post/create" target="_blank" className="">Create new</Link>
       </div>
       <div className="my-7">
         {mainPageContent}

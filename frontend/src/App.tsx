@@ -11,6 +11,10 @@ import ResetPassword from './components/Auth/ResetPassword'
 
 import Posts from './components/Posts/Posts'
 import Post from './components/Posts/Post'
+import CreatePost from './components/Posts/CreatePost'
+import DeletePost from './components/Posts/DeletePost'
+import EditPost from './components/Posts/EditPost'
+
 function App() {
   return (
     <>
@@ -24,6 +28,9 @@ function App() {
 
             <Route path="/posts" element={<Posts />} />
             <Route path="/post/:id" element={<Post />}   />
+            <Route path="/post/create" element={<CreatePost />}   />
+            <Route path="/post/:id/edit" element={<EditPost />} />
+            <Route path="/post/:id/delete" element={<DeletePost />} />
 
             <Route path="/register" element={<Register />} />
             <Route path="/signin" element={<Signin />} />
