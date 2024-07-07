@@ -24,7 +24,7 @@ TBA (add pictures here)
 
 ## Known issues:
 
-TBA?
++ Frontend: page styling not working correctly in Firefox (could be any non-chromium based browsers)
 
 ## How to build and run:
 
