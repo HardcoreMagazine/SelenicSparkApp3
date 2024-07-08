@@ -25,6 +25,7 @@ TBA (add pictures here)
 ## Known issues:
 
 + Frontend: page styling not working correctly in Firefox (could be any non-chromium based browsers)
++ Frontend: page styling not working correctly on small resolution screens (phone screens) -- wontfix
 
 ## How to build and run:
 
