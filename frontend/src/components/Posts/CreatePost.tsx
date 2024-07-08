@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 // import { ErrorPopup } from '../Shared/ErrorPopup'
 // import { StatusCodes } from "../Shared/EStatusCodes"
-import { Navigate } from "react-router-dom"
 
 function CreatePost() {
   //const [errorMessage, setErrorMessage] = useState<string | null>(null);
