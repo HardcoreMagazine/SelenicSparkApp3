@@ -66,7 +66,7 @@ namespace PostsService.Controllers
         public int CreatePost(Post post)
         {
             if (!Post.Validate(post) || !post.Enabled)
-                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
+                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
             {
@@ -77,12 +77,12 @@ namespace PostsService.Controllers
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
         }
 
@@ -98,22 +98,22 @@ namespace PostsService.Controllers
                 {
                     _appDbContext.Posts.Update(post);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
             }
             else
             {
-                return (int)SharedLib.StatusCodes.ClientFail;
+                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
         }
 
@@ -122,7 +122,7 @@ namespace PostsService.Controllers
         {
             if (!Post.Validate(post) || !post.Enabled)
             {
-                return (int)SharedLib.StatusCodes.ClientFail;
+                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
             else
             {
@@ -140,12 +140,12 @@ namespace PostsService.Controllers
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
             }
         }

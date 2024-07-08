@@ -43,18 +43,18 @@ namespace UserService.Controllers
         {
             // minimuzing error possibility
             if (string.IsNullOrWhiteSpace(userid.ToString()) || roleid <= 0)
-                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
+                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
             {
                 var user = _appDbContext.Users.FirstOrDefault(u => u.GUID == userid);
                 if (user == null)
-                    return (int)SharedLib.StatusCodes.ClientFail;
+                    return (int)SharedLibCS.StatusCodes.ClientFail;
 
                 var role = _appDbContext.Roles.FirstOrDefault(r => r.ID == roleid);
 
                 if (role == null)
-                    return (int)SharedLib.StatusCodes.ClientFail;
+                    return (int)SharedLibCS.StatusCodes.ClientFail;
 
                 var userRoles = _appDbContext.UserRoles.Where(ur => ur.UsertID == userid);
 
@@ -63,22 +63,22 @@ namespace UserService.Controllers
                     var newUserRole = new UserRole() { UsertID = userid, RoleID = roleid };
                     _appDbContext.UserRoles.Add(newUserRole);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 else
                 {
-                    return (int)SharedLib.StatusCodes.ClientFail;
+                    return (int)SharedLibCS.StatusCodes.ClientFail;
                 }    
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
         }
 
@@ -86,7 +86,7 @@ namespace UserService.Controllers
         public int EraseRole(Guid userid, int roleid)
         {
             if (string.IsNullOrWhiteSpace(userid.ToString()) || roleid <= 0)
-                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
+                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
             {
@@ -96,22 +96,22 @@ namespace UserService.Controllers
                 {
                     _appDbContext.UserRoles.Remove(userRole);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 else
                 {
-                    return (int)SharedLib.StatusCodes.ClientFail;
+                    return (int)SharedLibCS.StatusCodes.ClientFail;
                 }
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
         }
     }

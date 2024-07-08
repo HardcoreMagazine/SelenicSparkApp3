@@ -31,14 +31,15 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      //"launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "46801" // only accept HTTPS (otherwise it launches TWO services)
         //"ASPNETCORE_HTTP_PORTS": "46802" // fails to launch anyways...
       },
       "publishAllPorts": false, // when TRUE: binds docker port to random host port 
-      "useSSL": true, // enables https which we don't need since this is public data
-      // force-use port; otherwise FRONT fails to connect; much match with HTTP/S_PORTS value above
-      "DockerfileRunArguments": "-p 46801:46801"
+      "useSSL": true, // enables https
+      "DockerfileRunArguments": "-p 46801:46801" // force docker app to use port; 
+      //otherwise FRONT fails to connect; must match with HTTP/S_PORTS value above
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",

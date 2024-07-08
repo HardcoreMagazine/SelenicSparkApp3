@@ -65,23 +65,23 @@ namespace UserService.Controllers
         public int CreateUser(User user)
         {
             if (!Models.User.Validate(user) || !user.Enabled)
-                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
+                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
             {
                 _appDbContext.Users.Add(user);
                 _appDbContext.SaveChanges();
-                return (int)SharedLib.StatusCodes.Ok;
+                return (int)SharedLibCS.StatusCodes.Ok;
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
         }
 
@@ -97,22 +97,22 @@ namespace UserService.Controllers
                 {
                     _appDbContext.Users.Update(user);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
             }
             else
             {
-                return (int)SharedLib.StatusCodes.ClientFail;
+                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
         }
 
@@ -121,7 +121,7 @@ namespace UserService.Controllers
         {
             if (string.IsNullOrWhiteSpace(oldPwd) || !Models.User.Validate(user) || !user.Enabled)
             {
-                return (int)SharedLib.StatusCodes.ClientFail;
+                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
             else
             {
@@ -133,7 +133,7 @@ namespace UserService.Controllers
                     // verify user identity (temporal solution, hopefully)
                     if (userOld.Password != oldPwd)
                     {
-                        return (int)SharedLib.StatusCodes.BadCredentials;
+                        return (int)SharedLibCS.StatusCodes.BadCredentials;
                     }
 
                     if (userOld.Email != user.Email)
@@ -145,17 +145,17 @@ namespace UserService.Controllers
 
                     _appDbContext.Users.Update(userOld);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
             }
         }

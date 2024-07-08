@@ -1,4 +1,4 @@
-﻿namespace SharedLib
+﻿namespace SharedLibCS
 {
     public enum StatusCodes
     {

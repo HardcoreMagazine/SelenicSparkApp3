@@ -40,23 +40,23 @@ namespace UserService.Controllers
         public int CreateRole(Role role)
         {
             if (!Role.Validate(role) || !role.Enabled)
-                return (int)SharedLib.StatusCodes.ClientFail; // bad request body
+                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
             {
                 _appDbContext.Roles.Add(role);
                 _appDbContext.SaveChanges();
-                return (int)SharedLib.StatusCodes.Ok;
+                return (int)SharedLibCS.StatusCodes.Ok;
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLib.StatusCodes.ServerFail;
+                return (int)SharedLibCS.StatusCodes.ServerFail;
             }
         }
 
@@ -72,22 +72,22 @@ namespace UserService.Controllers
                 {
                     _appDbContext.Roles.Update(role);
                     _appDbContext.SaveChanges();
-                    return (int)SharedLib.StatusCodes.Ok;
+                    return (int)SharedLibCS.StatusCodes.Ok;
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLib.StatusCodes.ServerFail;
+                    return (int)SharedLibCS.StatusCodes.ServerFail;
                 }
             }
             else
             {
-                return (int)SharedLib.StatusCodes.ClientFail;
+                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
         }
     }
