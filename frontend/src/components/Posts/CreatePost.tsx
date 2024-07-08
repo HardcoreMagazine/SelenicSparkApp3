@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
-// import { ErrorPopup } from '../Shared/ErrorPopup'
-// import { StatusCodes } from "../Shared/EStatusCodes"
 
 function CreatePost() {
-  //const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // this will allow to auto-resize textarea HTML element
   // kudos to github.com/codewgi
   const textRef = useRef("");
@@ -47,20 +44,8 @@ function CreatePost() {
     if (responseCode > 0) {
       window.location.replace(`/post/${responseCode}`);
     }
-    // else {
-    //   if (responseCode === StatusCodes.ServerFail) {
-    //     setErrorMessage("Server is unavailable or busy. Please, try again later.");
-    //   }
-    //   else {
-    //     setErrorMessage("Bad request");
-    //   }
-    // }
   }
   
-  // const handleCloseError = () => {
-  //   setErrorMessage(null);
-  // }
-
   return (
     <>
       <div className="space-y-6">
@@ -79,11 +64,9 @@ function CreatePost() {
             PUBLISH
           </button>
         </form>
-
       </div>
     </>
   );
 }
-//insert between closing tags 'form' and 'div':
-//{errorMessage && <ErrorPopup message={errorMessage} onClose={handleCloseError} />}
+
 export default CreatePost;
