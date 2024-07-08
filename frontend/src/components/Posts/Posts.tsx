@@ -16,7 +16,7 @@ function Posts() {
     <ul className="space-x-10 mx-16">
       {posts.length > 0 && (
         posts.map(post => 
-          <Link to={"/post/"+post.id} key={post.id} target="_blank">
+          <Link to={`/post/${post.id}`} key={post.id} target="_blank">
             <li key={post.id} className="border-2 border-indigo-800 py-6 bg-opacity-10 bg-slate-500 rounded-md">
               <h2 className="break-all mx-10 text-start text-xl">
                 {post.title}

@@ -17,10 +17,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a { 
+a, button { 
   color: #FF204E;
 }
 
-a:hover {
+a:hover, button:hover {
   color: #FF4C71;
 }

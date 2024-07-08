@@ -5,7 +5,7 @@ function CreatePost() {
   // this will allow to auto-resize textarea HTML element
   // kudos to github.com/codewgi
   const textRef = useRef("");
-  const [txt, setTxt] = useState("");
+  const [txt, setTxt] = useState<string>();
   // needed by law, otherwise browser renders read-only input
   const txtChangeHandler = (e) => {
     setTxt(e.target.value);
@@ -31,7 +31,7 @@ function CreatePost() {
     const res = await fetch("https://localhost:46801/post", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: jsonData
     });

@@ -24,14 +24,14 @@ function Post() {
         By <span className="font-medium">{post.author}</span> @ on <span className="font-medium">{post.dateCreated}</span>
       </p>
       <div className="space-x-16">
-        <Link to={"/post/" + post.id + "/edit"} className="bg-indigo-700 border rounded-md px-4 py-1">
+        <Link to={`/post/${post.id}/edit`} className="bg-indigo-700 border rounded-md px-4 py-1">
           Edit
         </Link>
-        <Link to={"/post/" + post.id + + "/delete"} className="bg-indigo-700 border rounded-md px-4 py-1">
+        <Link to={`/post/${post.id}/delete`} className="bg-indigo-700 border rounded-md px-4 py-1">
           Delete
         </Link>
       </div>
-      <p className="break-words">
+      <p className="break-words mb-8">
         {post.text}
       </p>
     </div>
