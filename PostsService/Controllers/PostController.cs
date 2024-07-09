@@ -120,7 +120,7 @@ namespace PostsService.Controllers
         [HttpPut]
         public int Update(Post post)
         {
-            if (!Post.Validate(post) || !post.Enabled)
+            if (!Post.Validate(post) || !post.Enabled || post.ID <= 0)
             {
                 return (int)SharedLibCS.StatusCodes.ClientFail;
             }

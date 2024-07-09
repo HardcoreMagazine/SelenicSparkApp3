@@ -7,8 +7,8 @@ function ResetPassword() {
             <div className="p-9 space-y-4">
               <form className="space-y-4 md:space-y-6">
                 <input type="email" className="rounded-md focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="E-mail" required="true" />
-                <button type="submit" className="w-full rounded-md text-sm px-5 py-2.5 text-center bg-pink-900 hover:bg-pink-800 font-semibold">
-                  Send the recovery link
+                <button type="submit" className="w-full rounded-md px-5 py-2.5 text-center bg-indigo-900 hover:bg-indigo-800 font-semibold">
+                  Send account recovery link
                 </button>
               </form>
             </div>

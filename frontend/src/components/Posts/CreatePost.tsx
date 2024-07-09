@@ -52,16 +52,16 @@ function CreatePost() {
         <h1 className="text-4xl mt-8">
           Create a post
         </h1>
-        <form method="post" onSubmit={createHandler}>
+        <form method="post" onSubmit={createHandler} className="py-12 rounded-lg bg-opacity-50 bg-neutral-800">
           <div className="grid mx-16 mb-4 space-y-3">
             <input name="id" value="0" hidden readOnly/>
             <input name="author" value={"developer_TODO"} hidden readOnly />
             <input name="dateCreated" value={new Date().toISOString()} hidden readOnly />
             <input name="title" placeholder="Title" maxLength="256" minLength="15" autoComplete="off" className="p-2 rounded-lg break-all border bg-stone-900 border-stone-500" />
-            <textarea name="text" placeholder="Text (optional)" autoComplete="off" maxLength="24000" value={txt} onChange={txtChangeHandler} ref={textRef} className="flex flex-col p-2 rounded-lg border bg-stone-900 border-stone-500" />
+            <textarea name="text" placeholder="Text (optional)" autoComplete="off" maxLength="24000" value={txt} onChange={txtChangeHandler} ref={textRef} className="resize-none pb-6 flex flex-col p-2 rounded-lg border bg-stone-900 border-stone-500" />
           </div>
-          <button type="submit" className="py-1 px-32 mb-8 rounded-lg text-lg border border-indigo-400 bg-rose-800 hover:bg-rose-700 hover:text-indigo-300 select-none">
-            PUBLISH
+          <button type="submit" className="py-1 px-32 rounded-lg text-lg border select-none bg-indigo-800 hover:bg-indigo-700">
+            Publish
           </button>
         </form>
       </div>

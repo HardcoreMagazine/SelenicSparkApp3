@@ -11,13 +11,13 @@ function Posts() {
   }, []); // when "[]" is not specified - program fetches data every 0.5s
 
   const mainPageContent = posts === undefined ? (
-    <h1>Loading, please wait</h1>
+    <span className="opacity-70">Loading, please wait...</span>
   ) : (
-    <ul className="space-x-10 mx-16">
+    <ul className="space-x-10">
       {posts.length > 0 && (
         posts.map(post => 
           <Link to={`/post/${post.id}`} key={post.id} target="_blank">
-            <li key={post.id} className="border-2 border-indigo-800 py-6 bg-opacity-10 bg-slate-500 rounded-md">
+            <li className="border-2 border-indigo-800 py-6 bg-opacity-10 bg-slate-500 rounded-md">
               <h2 className="break-all mx-10 text-start text-xl">
                 {post.title}
               </h2>
@@ -35,20 +35,24 @@ function Posts() {
         )
       )}
       {(posts.length === 0) && (
-        <li>Nope, nothing here</li>
+        <li>
+          Empty! Try to post something
+        </li>
       )}
     </ul>
   );
 
   return (
     <>
-      <div className="mt-12">
-        <Link to="/post/create" target="_blank" className="">Create new</Link>
+      <div>
+        <Link to="/post/create" target="_blank" className="rounded-lg px-8 py-2 border font-semibold bg-indigo-700 hover:bg-indigo-600">
+          Create new
+        </Link>
       </div>
       <div className="my-7">
         {mainPageContent}
       </div>
-      <div className="mb-12">
+      <div>
         &lt;pagination placeholder&gt;
       </div>
     </>

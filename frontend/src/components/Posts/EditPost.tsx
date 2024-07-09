@@ -4,28 +4,30 @@ import { useParams } from "react-router-dom";
 import { formatDtString } from "../Shared/FuncFormatDtString";
 
 function EditPost() {
-  const { id } = useParams();
-
-  const [post, setPost] = useState<IPost>();
-
-  useEffect(() => {
-    populateData();
-  }, []);
-
-
   // this will allow to auto-resize textarea HTML element
   // kudos to github.com/codewgi
-  const textRef = useRef("");
-  const [txt, setTxt] = useState<string>();
-  // needed by law, otherwise browser renders read-only input
-  const txtChangeHandler = (e) => {
-    setTxt(e.target.value);
-  };
-
+  // const textRef = useRef("");
+  // const [txt, setTxt] = useState<string>();
+  // // needed by law, otherwise browser renders read-only input
+  // const txtChangeHandler = (e) => {
+  //   setTxt(e.target.value);
+  // };
+  // useEffect(() => {
+  //   if (textRef.current) {
+  //     textRef.current.style.height = "auto";
+  //     textRef.current.style.height = textRef.current.scrollHeight + "px";  
+  //   }
+  // }, [txt]);
+  
+  const { id } = useParams();
+  const [post, setPost] = useState<IPost>();
+  
   useEffect(() => {
-    textRef.current.style.height = "auto";
-    textRef.current.style.height = textRef.current.scrollHeight + "px";
-  }, [txt]);
+    populateData();
+    // if (post) {
+    //   setTxt(post.text);
+    // }
+  }, []);
 
   const createHandler = async (e) => {
     e.preventDefault();
@@ -40,7 +42,7 @@ function EditPost() {
     const jsonData = JSON.stringify(formData);
 
     const res = await fetch("https://localhost:46801/post", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
@@ -60,7 +62,6 @@ function EditPost() {
   const mainPageContent = post === undefined ? (
     <h1>Loading, please wait</h1>
   ) : (
-    (setTxt(post.text), true) && (
     <>
       <div className="space-y-6">
         <h1 className="text-4xl mt-8">
@@ -71,16 +72,15 @@ function EditPost() {
             <input name="id" value={post.id} hidden readOnly />
             <input name="author" value={post.author} hidden readOnly />
             <input name="dateCreated" value={post.dateCreated} hidden readOnly />
-            <input name="title" value={post.title} readOnly placeholder="Title" maxLength="256" minLength="15" autoComplete="off" className="p-2 rounded-lg break-all border bg-stone-900 border-stone-500" />
-            <textarea name="text" placeholder="Text (optional)" autoComplete="off" maxLength="24000" value={txt} onChange={txtChangeHandler} ref={textRef} className="flex flex-col p-2 rounded-lg border bg-stone-900 border-stone-500" />
+            <input name="title" value={post.title} readOnly placeholder="Title" maxLength="256" minLength="15" autoComplete="off" className="p-2 rounded-lg break-all border bg-stone-900 border-stone-500 selection:select-none" />
+            <textarea name="text" placeholder="Text (optional)" autoComplete="off" maxLength="24000" value={post.text} className="flex flex-col p-2 rounded-lg border bg-stone-900 border-stone-500" />
           </div>
-          <button type="submit" className="py-1 px-32 mb-8 rounded-lg text-lg border border-indigo-400 bg-rose-800 hover:bg-rose-700 hover:text-indigo-300 select-none">
-            PUBLISH
+          <button type="submit" className="py-1 px-32 mb-8 rounded-lg text-lg border select-none bg-indigo-800 hover:bg-indigo-700">
+            Publish changes
           </button>
         </form>
       </div>
     </>
-    )
   );
 
   return (

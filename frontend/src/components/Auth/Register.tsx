@@ -21,7 +21,7 @@ function Register() {
                     </label>
                   </div>
               </div>
-              <button type="submit" className="w-full rounded-md text-sm px-5 py-2.5 text-center bg-pink-900 hover:bg-pink-800 font-semibold">
+              <button type="submit" className="w-full rounded-md px-5 py-2.5 text-center bg-indigo-900 hover:bg-indigo-800 font-semibold">
                 Register
               </button>
             </form>
