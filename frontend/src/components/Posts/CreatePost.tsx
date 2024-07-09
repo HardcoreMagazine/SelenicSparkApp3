@@ -4,7 +4,7 @@ import { IPost } from './IPost'
 function CreatePost() {
   // this will allow to auto-resize textarea HTML element
   // kudos to github.com/codewgi
-  const textRef = useRef("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const [txt, setTxt] = useState<string>();
   // needed by law, otherwise browser renders read-only input
   const txtChangeHandler = (e) => {
