@@ -128,10 +128,10 @@ namespace PostsService.Controllers
             {
                 try
                 {
-                    // safe update: automatically block all attempts to change "Author", "CreateDate", "Enabled" fields
+                    // safe update: automatically block all attempts to change all fields except "Text"
                     var postOld = _appDbContext.Posts.First(p => p.ID == post.ID);
                     postOld.Text = post.Text;
-                    postOld.Title = post.Title;
+                    //postOld.Title = post.Title;
 
                     _appDbContext.Posts.Update(postOld);
                     _appDbContext.SaveChanges();
