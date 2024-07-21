@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 import { useParams } from "react-router-dom";
-import { formatDtString } from "../Shared/FuncFormatDtString";
+// import { formatDtString } from "../Shared/FuncFormatDtString";
 
 function EditPost() {
   const { id } = useParams();
@@ -24,7 +24,7 @@ function EditPost() {
     // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc -
     // server has no idea how to process it so it throws an error
 
-    // ignore that, response reads:
+    // ignore that thing above, response reads:
     // "The JSON value could not be converted to System.DateTimeOffset. Path: $.dateCreated | LineNumber: 0 | BytePositionInLine: 64."
     // -- side note: why TF are we not hitting breakpoint inside PostController then??
     const res = await fetch("https://localhost:46801/post", {
@@ -91,7 +91,8 @@ function EditPost() {
   async function populateData() {
     const res = await fetch(`https://localhost:46801/post/${id}`);
     const data: IPost = await res.json();
-    data.dateCreated = formatDtString(data.dateCreated);
+    // rather simple fix for a very complex issue:
+    //data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }
 }
