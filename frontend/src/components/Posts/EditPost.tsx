@@ -38,10 +38,12 @@ function EditPost() {
     console.log(data);
     afterCreateHandler(data);
   };
+
   const afterCreateHandler = (responseCode: number) => {
-    if (responseCode == 0) {
+    if (responseCode > 0) {
       window.location.replace(`/post/${responseCode}`);
     }
+    //else process error
   };
 
   const textRef = useRef<HTMLTextAreaElement>(null);
