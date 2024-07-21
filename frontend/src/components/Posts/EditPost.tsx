@@ -19,6 +19,9 @@ function EditPost() {
       formData[e.target[i].name] = e.target[i].value;
     }
     const jsonData = JSON.stringify(formData);
+    // error in reponse, code 400/bad request
+    // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc - 
+    // server has no idea how to process it so it throws an error
     const res = await fetch("https://localhost:46801/post", {
       method: "PUT",
       headers: {
@@ -57,7 +60,7 @@ function EditPost() {
         <h1 className="text-4xl mt-8">
           Post editing mode
         </h1>
-        <form method="post" onSubmit={createHandler} className="py-12 rounded-lg bg-opacity-50 bg-neutral-800">
+        <form onSubmit={createHandler} className="py-12 rounded-lg bg-opacity-50 bg-neutral-800">
           <div className="grid mx-16 mb-4 space-y-3">
             <input name="id" value={post.id} hidden readOnly />
             <input name="author" value={post.author} hidden readOnly />
