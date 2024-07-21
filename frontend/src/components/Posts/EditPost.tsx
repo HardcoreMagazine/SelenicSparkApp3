@@ -19,9 +19,14 @@ function EditPost() {
       formData[e.target[i].name] = e.target[i].value;
     }
     const jsonData = JSON.stringify(formData);
+    console.log(jsonData);
     // error in reponse, code 400/bad request
-    // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc - 
+    // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc -
     // server has no idea how to process it so it throws an error
+
+    // ignore that, response reads:
+    // "The JSON value could not be converted to System.DateTimeOffset. Path: $.dateCreated | LineNumber: 0 | BytePositionInLine: 64."
+    // -- side note: why TF are we not hitting breakpoint inside PostController then??
     const res = await fetch("https://localhost:46801/post", {
       method: "PUT",
       headers: {
@@ -30,6 +35,7 @@ function EditPost() {
       body: jsonData
     });
     const data = await res.json();
+    console.log(data);
     afterCreateHandler(data);
   };
   const afterCreateHandler = (responseCode: number) => {

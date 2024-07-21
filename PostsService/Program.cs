@@ -26,9 +26,10 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy(name: crossProjectAccess, policy =>
     {
         policy.WithOrigins(
-            "http://localhost:5173",
+            "http://localhost:5173", // bad practice, this should be moved in appsettings.json or changed completely
             "https://localhost:46801"
         )
+        //.AllowCredentials()
         .AllowAnyMethod()
         .AllowAnyHeader();
     });
