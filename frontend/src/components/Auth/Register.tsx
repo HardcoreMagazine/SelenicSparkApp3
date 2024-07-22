@@ -30,7 +30,7 @@ function Register() {
       </div>
       <div className="inline">
         Already have an account?&nbsp;
-        <Link to="/signin" className="font-semibold">Sign In instead</Link>
+        <Link to="/user/signin" className="font-semibold">Sign In instead</Link>
       </div>
     </div>
   );

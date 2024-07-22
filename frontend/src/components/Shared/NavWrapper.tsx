@@ -22,7 +22,7 @@ function NavWrapper() {
                   <Link to="/posts">Posts</Link>
                 </li>
                 <li>
-                  <Link to="/signin">Sign In</Link>
+                  <Link to="/user/signin">Sign In</Link>
                 </li>
               </ul>
             </div>

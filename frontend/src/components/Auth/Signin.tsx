@@ -17,7 +17,7 @@ function Signin() {
                       <span className="ml-2 text-sm select-none">Remember me</span>
                     </label>
                   </div>
-                  <Link to="/resetpassword" className="text-sm font-medium">Reset password</Link>
+                  <Link to="/user/resetpassword" className="text-sm font-medium">Reset password</Link>
                 </div>
                 <button type="submit" className="w-full rounded-md px-5 py-2.5 text-center bg-indigo-900 hover:bg-indigo-800 font-semibold">
                   Sign in
@@ -28,7 +28,7 @@ function Signin() {
         </div>
         <div className="inline">
           New to SelenicSpark?&nbsp;
-          <Link to="/register" className="font-semibold">Create an account</Link>
+          <Link to="/user/register" className="font-semibold">Create an account</Link>
         </div>
       </div>
     </>

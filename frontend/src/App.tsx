@@ -32,9 +32,9 @@ function App() {
             <Route path="/post/:id/edit" element={<EditPost />} />
             <Route path="/post/:id/delete" element={<DeletePost />} />
 
-            <Route path="/register" element={<Register />} />
-            <Route path="/signin" element={<Signin />} />
-            <Route path="resetpassword" element={<ResetPassword />} />
+            <Route path="/user/register" element={<Register />} />
+            <Route path="/user/signin" element={<Signin />} />
+            <Route path="/user/resetpassword" element={<ResetPassword />} />
           </Route>
         </Routes>
       </Router>
