@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
-import { formatDtString } from '../Shared/FuncFormatDtString'
+import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
 import { Link } from 'react-router-dom'
+import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
 
 function Post() {
   const { id } = useParams();
@@ -44,8 +45,7 @@ function Post() {
   );
 
   async function populateData() {
-    const res = await fetch(`https://localhost:46801/post/${id}`);
-    const data: IPost = await res.json();
+    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }

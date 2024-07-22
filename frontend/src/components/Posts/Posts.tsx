@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { IPost } from './IPost'
 import { Link } from 'react-router-dom'
-import { formatDtString } from '../Shared/FuncFormatDtString'
+import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
+import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler';
 
 function Posts() {
   const [posts, setPosts] = useState<IPost[]>();
@@ -59,8 +60,7 @@ function Posts() {
   );
 
   async function populateCollection() {
-    const res = await fetch('https://localhost:46801/post');
-    const data: IPost[] = await res.json();
+    const data: IPost[] = await sendReq('https://localhost:46801/post');
     data.forEach(post => post.dateCreated = formatDtString(post.dateCreated));
     setPosts(data);
   }

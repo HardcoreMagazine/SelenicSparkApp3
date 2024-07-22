@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
+import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
 
 function CreatePost() {
   // this will allow to auto-resize textarea HTML element
@@ -28,7 +29,7 @@ function CreatePost() {
     }
     const jsonData = JSON.stringify(formData);
     
-    const res = await fetch("https://localhost:46801/post", {
+    const data: number = await sendReq("https://localhost:46801/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -36,7 +37,6 @@ function CreatePost() {
       body: jsonData
     });
     
-    const data = await res.json();
     afterCreateHandler(data);
   }
 

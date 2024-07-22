@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 import { useParams } from "react-router-dom";
+import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
 // import { formatDtString } from "../Shared/FuncFormatDtString";
 
 function EditPost() {
@@ -19,7 +20,6 @@ function EditPost() {
       formData[e.target[i].name] = e.target[i].value;
     }
     const jsonData = JSON.stringify(formData);
-    console.log(jsonData);
     // error in reponse, code 400/bad request
     // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc -
     // server has no idea how to process it so it throws an error
@@ -35,7 +35,6 @@ function EditPost() {
       body: jsonData
     });
     const data = await res.json();
-    console.log(data);
     afterCreateHandler(data);
   };
 
@@ -91,8 +90,7 @@ function EditPost() {
   );
 
   async function populateData() {
-    const res = await fetch(`https://localhost:46801/post/${id}`);
-    const data: IPost = await res.json();
+    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     // rather simple fix for a very complex issue:
     //data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);

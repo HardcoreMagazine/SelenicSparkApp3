@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
-import { formatDtString } from '../Shared/FuncFormatDtString'
+import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
 import { Link } from 'react-router-dom'
+import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
 
 function DeletePost() {
   const { id } = useParams();
@@ -12,6 +13,12 @@ function DeletePost() {
   useEffect(() => {
     populateData();
   }, []);
+
+  const afterDeleteHandler = (responseCode: number) => {
+    if (responseCode == 0) {
+      window.location.replace(`/posts`);
+    }
+  }
 
   const mainPageContent = post === undefined ? (
     <h1>Loading, please wait</h1>
@@ -54,26 +61,16 @@ function DeletePost() {
   );
 
   async function populateData() {
-    const res = await fetch(`https://localhost:46801/post/${id}`, {
-      method: "GET"
-    });
-    const data: IPost = await res.json();
+    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }
 
   async function commitDeletion() {
-    const res = await fetch(`https://localhost:46801/post/?id=${id}`, {
+    const data: number = await sendReq(`https://localhost:46801/post/?id=${id}`, {
       method: "DELETE",
     });
-    const data: number = await res.json();
-    if (data == 0) {
-      window.location.replace("/posts")
-    }
-    else {
-      // error handler, maybe?
-    }
-    // note: not sure if such checks are really needed
+    afterDeleteHandler(data);
   }
 }
 
