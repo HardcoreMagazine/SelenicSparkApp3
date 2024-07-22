@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
 import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
 import { Link } from 'react-router-dom'
-import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
+//import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
+import { ApiService } from '../Shared/Scriprs/ApiService'
+import { ApiEndpoints } from '../Shared/Scriprs/EApiEndpoints'
+import { HttpMethods } from '../Shared/Scriprs/EHttpMethods'
 
 function Post() {
   const { id } = useParams();
@@ -45,7 +48,13 @@ function Post() {
   );
 
   async function populateData() {
-    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
+    //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
+    const data: IPost = await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.GET,
+      params: `/${id}`
+    });
+    
     data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }

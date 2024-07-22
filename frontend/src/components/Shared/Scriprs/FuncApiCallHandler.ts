@@ -1,4 +1,4 @@
-export async function sendReq(path: string, headers: object | undefined = undefined) {
+/*export async function sendReq(path: string, headers: object | undefined = undefined) {
     let response; //:Promise<Response>
     if (headers) {
         response = await fetch(path, headers);
@@ -9,3 +9,4 @@ export async function sendReq(path: string, headers: object | undefined = undefi
     const data = await response.json();
     return data;
 }
+*/

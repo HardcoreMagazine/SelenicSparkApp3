@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 import { useParams } from "react-router-dom";
-import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
+import { ApiService } from '../Shared/Scriprs/ApiService';
+import { ApiEndpoints } from "../Shared/Scriprs/EApiEndpoints";
+import { HttpMethods } from "../Shared/Scriprs/EHttpMethods";
+// import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
 // import { formatDtString } from "../Shared/FuncFormatDtString";
 
 function EditPost() {
@@ -20,29 +23,30 @@ function EditPost() {
       formData[e.target[i].name] = e.target[i].value;
     }
     const jsonData = JSON.stringify(formData);
-    // error in reponse, code 400/bad request
-    // caused because we somehow fetch ALL the data at once, i.e. ID=1, ID=11 (we trying to update), ID=26 and etc -
-    // server has no idea how to process it so it throws an error
 
-    // ignore that thing above, response reads:
-    // "The JSON value could not be converted to System.DateTimeOffset. Path: $.dateCreated | LineNumber: 0 | BytePositionInLine: 64."
-    // -- side note: why TF are we not hitting breakpoint inside PostController then??
-    const res = await fetch("https://localhost:46801/post", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: jsonData
+    // const res = await fetch("https://localhost:46801/post", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: jsonData
+    // });
+    // const data = await res.json();
+    //afterCreateHandler(data);
+    
+    await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.PUT,
+      body: jsonData,
+      afterHandler: afterCreateHandler
     });
-    const data = await res.json();
-    afterCreateHandler(data);
   };
 
   const afterCreateHandler = (responseCode: number) => {
     if (responseCode > 0) {
       window.location.replace(`/post/${responseCode}`);
     }
-    //else process error
+    //else process error - ?
   };
 
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -90,9 +94,13 @@ function EditPost() {
   );
 
   async function populateData() {
-    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
-    // rather simple fix for a very complex issue:
-    //data.dateCreated = formatDtString(data.dateCreated);
+    //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
+    const data: IPost = await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.GET,
+      params: `/${id}`
+    });
+    
     setPost(data);
   }
 }

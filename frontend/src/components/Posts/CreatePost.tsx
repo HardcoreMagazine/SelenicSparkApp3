@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
+import { ApiService } from "../Shared/Scriprs/ApiService";
+import { ApiEndpoints } from "../Shared/Scriprs/EApiEndpoints";
+import { HttpMethods } from "../Shared/Scriprs/EHttpMethods";
 
 function CreatePost() {
   // this will allow to auto-resize textarea HTML element
@@ -29,21 +32,28 @@ function CreatePost() {
     }
     const jsonData = JSON.stringify(formData);
     
-    const data: number = await sendReq("https://localhost:46801/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: jsonData
-    });
+    // const data: number = await sendReq("https://localhost:46801/post", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: jsonData
+    // });
+    // afterCreateHandler(data);
     
-    afterCreateHandler(data);
+    await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.POST,
+      body: jsonData,
+      afterHandler: afterCreateHandler
+    })
   }
 
   const afterCreateHandler = (responseCode: number) => {
     if (responseCode > 0) {
       window.location.replace(`/post/${responseCode}`);
     }
+    // else: parse error
   }
   
   return (

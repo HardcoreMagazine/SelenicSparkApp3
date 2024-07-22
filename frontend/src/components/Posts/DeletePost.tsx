@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
 import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
 import { Link } from 'react-router-dom'
-import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
+//import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
+import { ApiService } from '../Shared/Scriprs/ApiService';
+import { ApiEndpoints } from '../Shared/Scriprs/EApiEndpoints'
+import { HttpMethods } from '../Shared/Scriprs/EHttpMethods'
 
 function DeletePost() {
   const { id } = useParams();
@@ -61,16 +64,27 @@ function DeletePost() {
   );
 
   async function populateData() {
-    const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
+    const data: IPost = await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.GET,
+      params: `/${id}`
+    })
+    //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }
 
   async function commitDeletion() {
-    const data: number = await sendReq(`https://localhost:46801/post/?id=${id}`, {
-      method: "DELETE",
+    // const data: number = await sendReq(`https://localhost:46801/post/?id=${id}`, {
+    //   method: "DELETE",
+    // });
+    //afterDeleteHandler(data);
+    await ApiService.handleRequest({
+      endpoint: ApiEndpoints.Post,
+      method: HttpMethods.DELETE,
+      params: `/?id=${id}`,
+      afterHandler: afterDeleteHandler
     });
-    afterDeleteHandler(data);
   }
 }
 
