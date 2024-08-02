@@ -2,16 +2,18 @@ using Microsoft.EntityFrameworkCore;
 using PostsService.Data;
 
 
-//TODO: https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-8.0
+//TODO?: https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-8.0
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
@@ -25,6 +27,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy(name: crossProjectAccess, policy =>
     {
+        //policy.AllowAnyOrigin();
         policy.WithOrigins(
             "http://localhost:5173", // bad practice, this should be moved in appsettings.json or changed completely
             "https://localhost:46801"
@@ -38,16 +41,17 @@ builder.Services.AddCors(opt =>
 var app = builder.Build();
 
 //Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
 app.UseCors(crossProjectAccess);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

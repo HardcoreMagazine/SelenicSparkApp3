@@ -5,7 +5,7 @@ using PostsService.Models;
 namespace PostsService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class PostController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
@@ -17,135 +17,138 @@ namespace PostsService.Controllers
             _logger = logger;
         }
 
-        // v1: all at once;
-        // v2: pagination
-        [HttpGet]
-        public IEnumerable<Post> Get()
+        [HttpPost]
+        public async Task<ActionResult<int>> CreateNew([FromBody] Post post)
         {
+            if (!Post.Validate(post) || !post.Enabled)
+                return BadRequest();
+
             try
             {
-                return _appDbContext.Posts
-                    .Where(p => p.Enabled)
-                    .OrderBy(p => p.ID)
-                    .ToList();
+                await _appDbContext.Posts.AddAsync(post);
+                await _appDbContext.SaveChangesAsync();
+                return Ok(post.ID); // id is returned after insertion (automatically)
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return new List<Post>();
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        // v1: all at once;
+        // v2: pagination
+        [HttpGet]
+        public async Task<ActionResult<List<Post>>> GetAll()
+        {
+            try
+            {
+                var data = await Task.FromResult(_appDbContext.Posts
+                    .Where(p => p.Enabled)
+                    .OrderBy(p => p.ID)
+                    .ToList());
+                return Ok(data);
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return Ok(new List<Post>());
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return new List<Post>();
+                return Ok(new List<Post>());
             }
         }
 
         [HttpGet("{id:int}")]
-        public Post GetID(int id)
+        public async Task<ActionResult<Post>> GetID(int id)
         {
             try
             {
-                var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled) 
-                    ?? throw new Exception($"Post id=\"{id}\" not found");
-                return post;
+                var post = await Task.FromResult(_appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled)); 
+                if (post == null)
+                    return NotFound();
+                else
+                    return Ok(post);
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return new Post();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            catch (Exception ex)
+            catch (Exception)// ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return new Post();
-            }
-        }
-
-        [HttpPost]
-        public int CreatePost(Post post)
-        {
-            if (!Post.Validate(post) || !post.Enabled)
-                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
-
-            try
-            {
-                _appDbContext.Posts.Add(post);
-                _appDbContext.SaveChanges();
-                return post.ID; // id is returned after insertion
-            }
-            catch (Npgsql.PostgresException ex)
-            {
-                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLibCS.StatusCodes.ServerFail;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLibCS.StatusCodes.ServerFail;
-            }
-        }
-
-        [HttpDelete]
-        public int Delete(int id)
-        {
-            var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled);
-
-            if (post != null && Post.Validate(post))
-            {
-                post.Enabled = false;
-                try
-                {
-                    _appDbContext.Posts.Update(post);
-                    _appDbContext.SaveChanges();
-                    return (int)SharedLibCS.StatusCodes.Ok;
-                }
-                catch (Npgsql.PostgresException ex)
-                {
-                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
-                }
-            }
-            else
-            {
-                return (int)SharedLibCS.StatusCodes.ClientFail;
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPut]
-        public int Update(Post post)
+        public async Task<ActionResult<int>> Update([FromBody]Post updatedPost)
         {
-            if (!Post.Validate(post) || !post.Enabled || post.ID <= 0)
+            if (!Post.Validate(updatedPost) || !updatedPost.Enabled || updatedPost.ID <= 0)
             {
-                return (int)SharedLibCS.StatusCodes.ClientFail;
+                return BadRequest();
             }
             else
             {
                 try
                 {
                     // safe update: automatically block all attempts to change all fields except "Text"
-                    var postOld = _appDbContext.Posts.First(p => p.ID == post.ID);
-                    postOld.Text = post.Text;
-                    //postOld.Title = post.Title;
+                    var oldPost = _appDbContext.Posts.First(p => p.ID == updatedPost.ID);
+                    oldPost.Text = updatedPost.Text;
 
-                    _appDbContext.Posts.Update(postOld);
-                    _appDbContext.SaveChanges();
-                    return postOld.ID;
+                    _appDbContext.Posts.Update(oldPost);
+                    await _appDbContext.SaveChangesAsync();
+                    
+                    return Ok(oldPost.ID);
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-                catch (Exception ex)
+                catch (Exception)// ex)
                 {
-                    _logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
+                    //_logger.LogWarning($"{DateTimeOffset.Now} - ERROR: {ex.Message} | SRC: {ex.StackTrace}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                try
+                {
+                    post.Enabled = false;
+                    _appDbContext.Update(post);
+                    await _appDbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+                catch (Exception)// ex)
+                {
+                    //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
         }
