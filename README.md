@@ -3,6 +3,10 @@
 SelenicSpark3 is a third and a final generation of my home-made ready to deploy web forum/blog app created 
 using modern tech stack: PostgreSQL (RDB), .NET 8 WebAPI (OpenAPI) + Docker, ReactTS + Vite + TailwindCSS. 
 
+
+The project's goal is to learn just enough so I could try and make my own forum/blogpost for all people to use. 
+No ads, no fluff (say 'hi' to million-line recipe book/cooking websites), plain, old-style information on most various topics, straight to the point. 
+
 # WORK IN PROGRESS
 
 ## Features:
