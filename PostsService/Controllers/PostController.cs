@@ -26,22 +26,24 @@ namespace PostsService.Controllers
             {
                 return BadRequest();
             }
-                
-            try
+            else
             {
-                await _appDbContext.Posts.AddAsync(post);
-                await _appDbContext.SaveChangesAsync();
-                return Ok(post.ID); // id is returned after insertion (automatically)
-            }
-            catch (Npgsql.PostgresException ex)
-            {
-                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            catch (Exception)// ex)
-            {
-                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                try
+                {
+                    await _appDbContext.Posts.AddAsync(post);
+                    await _appDbContext.SaveChangesAsync();
+                    return Ok(post.ID); // id is returned after insertion (automatically)
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+                catch (Exception)// ex)
+                {
+                    //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
             }
         }
 
