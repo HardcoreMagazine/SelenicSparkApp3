@@ -31,7 +31,7 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "launchBrowser": true,
+      //"launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "46801" // only accept HTTPS (otherwise it launches TWO services)
         //"ASPNETCORE_HTTP_PORTS": "46802" // fails to launch anyways...
