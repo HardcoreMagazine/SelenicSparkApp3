@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PostsService.Data;
 using PostsService.Models;
+using PostsService.Models.DTO;
 
 namespace PostsService.Controllers
 {
@@ -18,11 +19,14 @@ namespace PostsService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateNew([FromBody] Post post)
+        public async Task<ActionResult<int>> CreateNew([FromBody] PostRequest pr)
         {
-            if (!Post.Validate(post) || !post.Enabled)
+            var post = Post.MapToPostFromRequest(pr);
+            if (!Post.Validate(post))
+            {
                 return BadRequest();
-
+            }
+                
             try
             {
                 await _appDbContext.Posts.AddAsync(post);
@@ -44,7 +48,7 @@ namespace PostsService.Controllers
         // v1: all at once;
         // v2: pagination
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetAll()
+        public async Task<ActionResult<List<PostResponse>>> GetAll()
         {
             try
             {
@@ -52,30 +56,47 @@ namespace PostsService.Controllers
                     .Where(p => p.Enabled)
                     .OrderBy(p => p.ID)
                     .ToList());
-                return Ok(data);
+                var result = new List<PostResponse>();
+                if (data.Count == 0)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    foreach (var post in data)
+                    {
+                        result.Add(Post.MapToResponseFromPost(post));
+                    }
+                    return Ok(result);
+                }
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return Ok(new List<Post>());
+                return Ok(new List<PostResponse>());
             }
-            catch (Exception ex)
+            catch (Exception)// ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return Ok(new List<Post>());
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return Ok(new List<PostResponse>());
             }
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Post>> GetID(int id)
+        public async Task<ActionResult<PostResponse>> GetID(int id)
         {
             try
             {
-                var post = await Task.FromResult(_appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled)); 
+                var post = await Task.FromResult(_appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled));
                 if (post == null)
+                {
                     return NotFound();
+                }
                 else
-                    return Ok(post);
+                {
+                    var pr = Post.MapToResponseFromPost(post);
+                    return Ok(pr);
+                }
             }
             catch (Npgsql.PostgresException ex)
             {
@@ -90,7 +111,7 @@ namespace PostsService.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> Update([FromBody]Post updatedPost)
+        public async Task<ActionResult<int>> Update([FromBody] Post updatedPost)
         {
             if (!Post.Validate(updatedPost) || !updatedPost.Enabled || updatedPost.ID <= 0)
             {
