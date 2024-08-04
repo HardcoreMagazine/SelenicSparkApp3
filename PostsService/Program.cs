@@ -1,5 +1,8 @@
+using Generics.Models;
 using Microsoft.EntityFrameworkCore;
 using PostsService.Data;
+using PostsService.Models;
+using PostsService.Service;
 
 
 //TODO?: https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-8.0
@@ -19,6 +22,12 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
+
+// don't put this before adding DbContext service, otherwise might cause errors
+
+// note to self: AddScoped: we are telling .net that if someone needs IRepository<Post> instance -
+// .net must create object PostManager to satisfy this requirement ("""dependency""")
+builder.Services.AddScoped<IRepository<Post>, PostManager>();
 
 // CORS policy name (could be any)
 var crossProjectAccess = "_crossProjectAccess";

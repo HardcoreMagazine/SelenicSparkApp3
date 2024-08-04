@@ -1,15 +1,16 @@
-using PostsService.Models.DTO;
+using Generics.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace PostsService.Models
 {
-    public class Post
+    public class Post : IEntity
     {
         private const int MinPostTitleLen = 15;
+        private const int MaxPostTitleLen = 256;
 
         [Key]
         public int ID { get; set; }
-        [Required, StringLength(maximumLength: 256, MinimumLength = MinPostTitleLen)]
+        [Required, StringLength(maximumLength: MaxPostTitleLen, MinimumLength = MinPostTitleLen)]
         public string Title { get; set; }
         [Required, StringLength(64)]
         public string Author { get; set; }
@@ -18,29 +19,20 @@ namespace PostsService.Models
         public DateTimeOffset DateCreated { get; set; } = DateTimeOffset.Now;
         public bool Enabled { get; set; } = true; // if "true" then visible, else hidden ("deleted")
 
+        /// <summary>
+        /// Checks if selected Post object corresponds to following rules: 
+        /// Post.Title and Post.Author is not: null, empty, whitespace; 
+        /// Post.Title.Length value between <paramref name="MinPostTitleLen"/> and 
+        /// <paramref name="MaxPostTitleLen"/> (defaults to 15, 256)
+        /// </summary>
+        /// <param name="post">Post object</param>
+        /// <returns>True if Post object corresponds to said rules</returns>
         public static bool Validate(Post post)
         {
-            if (string.IsNullOrWhiteSpace(post.Title) 
-                || string.IsNullOrWhiteSpace(post.Author) 
-                || post.Title.Length < MinPostTitleLen)
-                return false;
-            else
-                return true;
-        }
-
-        public static Post MapToPostFromRequest(PostRequest pr)
-        {
-            return new Post
-            {
-                Title = pr.title,
-                Author = pr.author,
-                Text = pr.text
-            };
-        }
-
-        public static PostResponse MapToResponseFromPost(Post post)
-        {
-            return new PostResponse(post.ID, post.Title, post.Author, post.Text, post.DateCreated);
+            return !string.IsNullOrWhiteSpace(post.Title) 
+                && !string.IsNullOrWhiteSpace(post.Author)
+                && post.Title.Length >= MinPostTitleLen
+                && post.Title.Length <= MaxPostTitleLen;
         }
     }
 }

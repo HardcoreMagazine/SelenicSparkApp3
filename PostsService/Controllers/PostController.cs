@@ -1,7 +1,9 @@
+using Generics.Models;
 using Microsoft.AspNetCore.Mvc;
 using PostsService.Data;
 using PostsService.Models;
 using PostsService.Models.DTO;
+using PostsService.Service;
 
 namespace PostsService.Controllers
 {
@@ -9,19 +11,19 @@ namespace PostsService.Controllers
     [Route("api/[controller]/[action]")]
     public class PostController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
         private readonly ILogger<PostController> _logger;
+        private readonly IRepository<Post> _postManager;
 
-        public PostController(ILogger<PostController> logger, AppDbContext appDbContext)
+        public PostController(ILogger<PostController> logger, IRepository<Post> postManager)
         {
-            _appDbContext = appDbContext;
             _logger = logger;
+            _postManager = postManager;
         }
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateNew([FromBody] PostRequest pr)
         {
-            var post = Post.MapToPostFromRequest(pr);
+            var post = PostMapper.MapToPostFromRequest(pr);
             if (!Post.Validate(post))
             {
                 return BadRequest();
@@ -30,9 +32,8 @@ namespace PostsService.Controllers
             {
                 try
                 {
-                    await _appDbContext.Posts.AddAsync(post);
-                    await _appDbContext.SaveChangesAsync();
-                    return Ok(post.ID); // id is returned after insertion (automatically)
+                    var id = await _postManager.CreateAsync(post);
+                    return Ok(id);
                 }
                 catch (Npgsql.PostgresException ex)
                 {
@@ -54,10 +55,7 @@ namespace PostsService.Controllers
         {
             try
             {
-                var data = await Task.FromResult(_appDbContext.Posts
-                    .Where(p => p.Enabled)
-                    .OrderBy(p => p.ID)
-                    .ToList());
+                var data = await _postManager.GetAllAsync();
                 var result = new List<PostResponse>();
                 if (data.Count == 0)
                 {
@@ -67,7 +65,7 @@ namespace PostsService.Controllers
                 {
                     foreach (var post in data)
                     {
-                        result.Add(Post.MapToResponseFromPost(post));
+                        result.Add(PostMapper.MapToResponseFromPost(post));
                     }
                     return Ok(result);
                 }
@@ -89,14 +87,14 @@ namespace PostsService.Controllers
         {
             try
             {
-                var post = await Task.FromResult(_appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled));
+                var post = await _postManager.GetAsync(id);
                 if (post == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    var pr = Post.MapToResponseFromPost(post);
+                    var pr = PostMapper.MapToResponseFromPost(post);
                     return Ok(pr);
                 }
             }
@@ -113,9 +111,12 @@ namespace PostsService.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> Update([FromBody] Post updatedPost)
+        public async Task<ActionResult<int>> Update([FromBody] PostResponse pr)
         {
-            if (!Post.Validate(updatedPost) || !updatedPost.Enabled || updatedPost.ID <= 0)
+            // instead of exposing our entire Post model we use DTO we've sent to the user
+            // (likely modified by the user)
+            var post = PostMapper.MapToPostFromResponse(pr);
+            if (!Post.Validate(post))
             {
                 return BadRequest();
             }
@@ -123,14 +124,11 @@ namespace PostsService.Controllers
             {
                 try
                 {
-                    // safe update: automatically block all attempts to change all fields except "Text"
-                    var oldPost = _appDbContext.Posts.First(p => p.ID == updatedPost.ID);
-                    oldPost.Text = updatedPost.Text;
-
-                    _appDbContext.Posts.Update(oldPost);
-                    await _appDbContext.SaveChangesAsync();
-                    
-                    return Ok(oldPost.ID);
+                    var result = await _postManager.UpdateAsync(post);
+                    if (result)
+                        return Ok(post.ID);
+                    else
+                        return NotFound();
                 }
                 catch (Npgsql.PostgresException ex)
                 {
@@ -148,31 +146,23 @@ namespace PostsService.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var post = _appDbContext.Posts.FirstOrDefault(p => p.ID == id && p.Enabled);
-
-            if (post == null)
+            try
             {
-                return NotFound();
-            }
-            else
-            {
-                try
-                {
-                    post.Enabled = false;
-                    _appDbContext.Update(post);
-                    await _appDbContext.SaveChangesAsync();
+                var result = await _postManager.DeleteAsync(id);
+                if (result)
                     return Ok();
-                }
-                catch (Npgsql.PostgresException ex)
-                {
-                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-                catch (Exception)// ex)
-                {
-                    //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
+                else
+                    return NotFound();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }
