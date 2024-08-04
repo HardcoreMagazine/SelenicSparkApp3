@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostsService", "PostsServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "UserService\UserService.csproj", "{D8CF8FD4-F949-446A-B37F-F7B59628D4CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService", "AuthService\AuthService.csproj", "{394A9657-129A-4FC5-BD7A-8C35474D8EEF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F748E3C6-587F-464F-AE6A-F722A0C7F75E}"
 	ProjectSection(SolutionItems) = preProject
 		installTestDb.sql = installTestDb.sql
@@ -42,10 +40,6 @@ Global
 		{D8CF8FD4-F949-446A-B37F-F7B59628D4CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8CF8FD4-F949-446A-B37F-F7B59628D4CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8CF8FD4-F949-446A-B37F-F7B59628D4CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{394A9657-129A-4FC5-BD7A-8C35474D8EEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{394A9657-129A-4FC5-BD7A-8C35474D8EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{394A9657-129A-4FC5-BD7A-8C35474D8EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{394A9657-129A-4FC5-BD7A-8C35474D8EEF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9310B0AF-A0C9-4527-874E-97CC360DF935}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9310B0AF-A0C9-4527-874E-97CC360DF935}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9310B0AF-A0C9-4527-874E-97CC360DF935}.Release|Any CPU.ActiveCfg = Release|Any CPU
