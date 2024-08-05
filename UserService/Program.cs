@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using UserService.Data;
+using UserService.Services.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(opt =>
-{
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
-});
+builder.Services.PlugServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -26,6 +22,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

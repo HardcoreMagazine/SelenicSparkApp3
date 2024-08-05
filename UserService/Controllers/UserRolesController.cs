@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data;
-using UserService.Models;
+using UserService.Models.Data;
 
 namespace UserService.Controllers
 {
@@ -47,7 +47,7 @@ namespace UserService.Controllers
 
             try
             {
-                var user = _appDbContext.Users.FirstOrDefault(u => u.GUID == userid);
+                var user = _appDbContext.Users.FirstOrDefault(u => u.PublicID == userid);
                 if (user == null)
                     return (int)SharedLibCS.StatusCodes.ClientFail;
 
