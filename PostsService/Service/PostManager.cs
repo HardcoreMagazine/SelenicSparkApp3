@@ -38,7 +38,7 @@ namespace PostsService.Service
         public async Task<Post?> GetAsync(int id)
         {
             return await _appDbContext.Posts
-                .FirstOrDefaultAsync(x => x.Enabled && x.ID == id);
+                .FirstOrDefaultAsync(x => x.ID == id && x.Enabled);
         }
 
         /// <summary>
@@ -83,8 +83,8 @@ namespace PostsService.Service
                 return false;
             }
         }
-
-        public async Task SaveChangesAsync()
+        
+        protected async Task SaveChangesAsync()
         {
             await _appDbContext.SaveChangesAsync();
         }
