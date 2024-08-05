@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PostsService.Models;
+using PostsService.Models.Data;
 
 namespace PostsService.Data
 {

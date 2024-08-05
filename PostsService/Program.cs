@@ -1,7 +1,7 @@
 using Generics.Models;
 using Microsoft.EntityFrameworkCore;
 using PostsService.Data;
-using PostsService.Models;
+using PostsService.Models.Data;
 using PostsService.Service;
 
 

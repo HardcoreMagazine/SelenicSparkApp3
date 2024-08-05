@@ -1,5 +1,5 @@
 ﻿using PostsService.Models.DTO;
-using PostsService.Models;
+using PostsService.Models.Data;
 
 namespace PostsService.Service
 {

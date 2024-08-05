@@ -1,7 +1,7 @@
 using Generics.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace PostsService.Models
+namespace PostsService.Models.Data
 {
     public class Post : IEntity
     {
@@ -29,7 +29,7 @@ namespace PostsService.Models
         /// <returns>True if Post object corresponds to said rules</returns>
         public static bool Validate(Post post)
         {
-            return !string.IsNullOrWhiteSpace(post.Title) 
+            return !string.IsNullOrWhiteSpace(post.Title)
                 && !string.IsNullOrWhiteSpace(post.Author)
                 && post.Title.Length >= MinPostTitleLen
                 && post.Title.Length <= MaxPostTitleLen;

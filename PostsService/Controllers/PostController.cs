@@ -1,7 +1,7 @@
 using Generics.Models;
 using Microsoft.AspNetCore.Mvc;
 using PostsService.Data;
-using PostsService.Models;
+using PostsService.Models.Data;
 using PostsService.Models.DTO;
 using PostsService.Service;
 
