@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data;
-using UserService.Models;
+using UserService.Models.Data;
 
 namespace UserService.Controllers
 {
@@ -45,7 +45,7 @@ namespace UserService.Controllers
         {
             try
             {
-                var user = _appDbContext.Users.FirstOrDefault(u => u.GUID == id && u.Enabled) 
+                var user = _appDbContext.Users.FirstOrDefault(u => u.PublicID == id && u.Enabled) 
                     ?? throw new Exception($"User id=\"{id}\" not found");
                 return user;
             }
@@ -64,7 +64,7 @@ namespace UserService.Controllers
         [HttpPost(Name = "register")]
         public int CreateUser(User user)
         {
-            if (!Models.User.Validate(user) || !user.Enabled)
+            if (!Models.Data.User.Validate(user) || !user.Enabled)
                 return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
 
             try
@@ -88,9 +88,9 @@ namespace UserService.Controllers
         [HttpDelete("{id:guid}")]
         public int Delete(Guid id)
         {
-            var user = _appDbContext.Users.FirstOrDefault(u => u.GUID == id && u.Enabled);
+            var user = _appDbContext.Users.FirstOrDefault(u => u.PublicID == id && u.Enabled);
 
-            if (user != null && Models.User.Validate(user))
+            if (user != null && Models.Data.User.Validate(user))
             {
                 user.Enabled = false;
                 try
@@ -119,7 +119,7 @@ namespace UserService.Controllers
         [HttpPut]
         public int Update(string oldPwd, User user)
         {
-            if (string.IsNullOrWhiteSpace(oldPwd) || !Models.User.Validate(user) || !user.Enabled)
+            if (string.IsNullOrWhiteSpace(oldPwd) || !Models.Data.User.Validate(user) || !user.Enabled)
             {
                 return (int)SharedLibCS.StatusCodes.ClientFail;
             }
@@ -128,10 +128,10 @@ namespace UserService.Controllers
                 try
                 {
                     // safe update: automatically block all attempts to change "Enabled", "Username" fields
-                    var userOld = _appDbContext.Users.First(p => p.GUID == user.GUID);
+                    var userOld = _appDbContext.Users.First(p => p.PublicID == user.PublicID);
 
                     // verify user identity (temporal solution, hopefully)
-                    if (userOld.Password != oldPwd)
+                    if (userOld.PasswordHash != oldPwd)
                     {
                         return (int)SharedLibCS.StatusCodes.BadCredentials;
                     }
@@ -141,7 +141,7 @@ namespace UserService.Controllers
                         userOld.Email = user.Email;
                         userOld.EmailConfirmed = false;
                     }
-                    userOld.Password = user.Password;
+                    userOld.PasswordHash = user.PasswordHash;
 
                     _appDbContext.Users.Update(userOld);
                     _appDbContext.SaveChanges();
