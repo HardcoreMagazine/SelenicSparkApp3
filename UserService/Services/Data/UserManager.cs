@@ -62,7 +62,8 @@ namespace UserService.Services.Data
         public async Task<User?> GetByEmailAsync(string email)
         {
             email = email.ToLower();
-            return await _appDbContext.Users.FirstOrDefaultAsync(x => x.Email == email && x.Enabled);
+            return await _appDbContext.Users
+                .FirstOrDefaultAsync(x => x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && x.Enabled);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
