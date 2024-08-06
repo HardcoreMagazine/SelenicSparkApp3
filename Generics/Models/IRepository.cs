@@ -10,38 +10,38 @@
         /// </summary>
         /// <param name="entity">IEntity child object</param>
         /// <returns>ID: int of created entity</returns>
-        public Task<int> CreateAsync(T entity);
+        Task<int> CreateAsync(T entity);
 
         /// <summary>
         /// Lists all entities in the database
         /// </summary>
         /// <returns>Collection of IEntity children objects</returns>
-        public Task<IReadOnlyCollection<T>> GetAllAsync();
+        Task<IReadOnlyCollection<T>> GetAllAsync();
 
         /// <summary>
         /// Lists properties of one specific entity by ID
         /// </summary>
         /// <param name="id">IEntity child object ID</param>
         /// <returns>IEntity child object</returns>
-        public Task<T?> GetAsync(int id);
+        Task<T?> GetAsync(int id);
 
         /// <summary>
         /// Deletes one specific entity by ID
         /// </summary>
         /// <param name="id">IEntity child object ID</param>
         /// <returns>True on successful removal</returns>
-        public Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
 
         /// <summary>
         /// Updates properties of one specific entity
         /// </summary>
         /// <param name="entity">IEntity child object</param>
         /// <returns>True on successful update</returns>
-        public Task<bool> UpdateAsync(T entity);
+        Task<bool> UpdateAsync(T entity);
 
         /// <summary>
         /// Commits changes made to the database entities; internal use only
         /// </summary>
-        protected Task SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }

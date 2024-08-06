@@ -150,7 +150,7 @@ namespace UserService.Services.Data
             }
         }
 
-        protected async Task SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
             await _appDbContext.SaveChangesAsync();
         }
