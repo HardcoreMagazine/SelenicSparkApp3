@@ -125,7 +125,7 @@ namespace UserService.Services.Data
                 return true;
             }
             else
-            {
+        {
                 return false;
             }
         }
