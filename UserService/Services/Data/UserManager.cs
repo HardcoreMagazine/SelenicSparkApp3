@@ -19,25 +19,25 @@ namespace UserService.Services.Data
         /// <summary>
         /// Register new user IF selected email and username is not in use
         /// </summary>
-        /// <returns>Fixed response code, see: <see cref="UserRegisterResponses"/></returns>
+        /// <returns>Fixed response code, see: <see cref="EntityCreateResponses"/></returns>
         public async Task<int> CreateAsync(User entity)
         {
             var userByName = await GetByUsernameAsync(entity.Username);
             if (userByName != null)
             {
-                return (int)UserRegisterResponses.UsernameInUse;
+                return (int)EntityCreateResponses.UsernameInUse;
             }
 
             var userByEmail = await GetByEmailAsync(entity.Email);
             if (userByEmail != null)
             {
-                return (int)UserRegisterResponses.EmailInUse;
+                return (int)EntityCreateResponses.EmailInUse;
             }
             
             await _appDbContext.Users.AddAsync(entity);
             await SaveChangesAsync();
 
-            return (int)UserRegisterResponses.Success;
+            return (int)EntityCreateResponses.Success;
         }
 
         public async Task<IReadOnlyCollection<User>> GetAllAsync()

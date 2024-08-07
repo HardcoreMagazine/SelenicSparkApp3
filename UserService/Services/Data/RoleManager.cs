@@ -1,38 +1,118 @@
 ﻿using Generics.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
+using UserService.Data;
 using UserService.Models.Data;
+using UserService.Models.SharedDictionary;
 
 namespace UserService.Services.Data
 {
     public class RoleManager : IRepository<Role>
     {
-        public Task<int> CreateAsync(Role entity)
+        private readonly AppDbContext _appDbContext;
+
+        public RoleManager(AppDbContext appDbContext)
         {
-            throw new NotImplementedException();
+            _appDbContext = appDbContext;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<int> CreateAsync(Role entity)
         {
-            throw new NotImplementedException();
+            var roleExists = await GetByNameAsync(entity.Name);
+            if (roleExists == null)
+            {
+                _appDbContext.Roles.Add(entity);
+                await SaveChangesAsync();
+                return (int)EntityCreateResponses.Success;
+            }
+            else
+            {
+                return (int)EntityCreateResponses.Exists;
+            }
         }
 
-        public Task<IReadOnlyCollection<Role>> GetAllAsync()
+        public async Task<IReadOnlyCollection<Role>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Roles
+                .Where(r => r.Enabled)
+                .OrderBy(r => r.ID)
+                .ToListAsync();
         }
 
-        public Task<Role?> GetAsync(int id)
+        public async Task<Role?> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Roles.FirstOrDefaultAsync(r => r.ID == id);
         }
 
-        public Task SaveChangesAsync()
+        public async Task<Role?> GetByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            return await _appDbContext.Roles
+                .FirstOrDefaultAsync(r => r.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public Task<bool> UpdateAsync(Role entity)
+        /// <summary>
+        /// Updates role name. Does not validate Role.Name property
+        /// </summary>
+        /// <returns>True on success</returns>
+        public async Task<bool> UpdateAsync(Role entity)
         {
-            throw new NotImplementedException();
+            var oldRole = await GetAsync(entity.ID);
+            if (oldRole != null)
+            {
+                oldRole.Name = entity.Name;
+                _appDbContext.Roles.Update(oldRole);
+                await SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Disables role without deleting database entry
+        /// </summary>
+        /// <returns>True on success</returns>
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var role = await GetAsync(id);
+            if (role != null)
+            {
+                role.Enabled = false;
+                _appDbContext.Roles.Update(role);
+                await SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Similar to <see cref="DeleteAsync"/> - disables role by name without deleting database entry
+        /// </summary>
+        /// <returns>True on success</returns>
+        public async Task<bool> DeleteByNameAsync(string name)
+        {
+            var role = await GetByNameAsync(name);
+            if (role != null)
+            {
+                role.Enabled = false;
+                _appDbContext.Roles.Update(role);
+                await SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }
