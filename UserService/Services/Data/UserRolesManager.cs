@@ -1,12 +1,10 @@
-﻿using Generics.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Models.Data;
-using UserService.Models.SharedDictionary;
 
 namespace UserService.Services.Data
 {
-    public class UserRolesManager : IRepository<UserRole>
+    public class UserRolesManager : IUserRoleRepository<UserRole>
     {
         private readonly AppDbContext _appDbContext;
 
@@ -15,19 +13,29 @@ namespace UserService.Services.Data
             _appDbContext = appDbContext;
         }
 
-        public async Task<int> CreateAsync(UserRole entity)
+        /// <summary>
+        /// Adds specific role to specific user; performs validations: 
+        /// if role exists and if user is already in a role
+        /// </summary>
+        /// <returns>True on success</returns>
+        public async Task<bool> GrantRoleToUserAsync(UserRole entity)
         {
+            var roleExists = await _appDbContext.Roles
+                .FirstOrDefaultAsync(x=> x.Enabled && x.ID == entity.RoleID);
+            if (roleExists == null) 
+                return false;
+
             var ur = await _appDbContext.UserRoles
                 .FirstOrDefaultAsync(x => x.RoleID == entity.RoleID && x.UserID == entity.UserID);
             if (ur == null)
             {
                 await _appDbContext.UserRoles.AddAsync(entity);
                 await SaveChangesAsync();
-                return (int)EntityCreateResponses.Success;
+                return true;
             }
             else
             {
-                return (int)EntityCreateResponses.Exists;
+                return false;
             }
         }
 
@@ -36,15 +44,12 @@ namespace UserService.Services.Data
             return await _appDbContext.UserRoles.ToListAsync();
         }
 
-        /// <summary>
-        /// This method won't be implemented, use <see cref="GetUserInRoleAsync"/> or <see cref="UserIsInRoleAsync"/> instead
-        /// </summary>
-        /// <returns>Always null!</returns>
-        [Obsolete("Won't be implemented, use methods GetUserInRoleAsync or UserIsInRoleAsync instead")]
-        public async Task<UserRole?> GetAsync(int id)
+        public async Task<IReadOnlyCollection<UserRole>> GetAllUserRolesAsync(string publicID)
         {
-            await Task.Run(()=>null); // dummy
-            throw new NotImplementedException();
+            var guid = Guid.Parse(publicID);
+            return await _appDbContext.UserRoles
+                .Where(x => x.UserID == guid)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -71,6 +76,14 @@ namespace UserService.Services.Data
             }
         }
 
+        public async Task<UserRole?> GetUserInRoleAsync(string publicID, int roleID)
+        {
+            var guid = Guid.Parse(publicID);
+            var userRole = await _appDbContext.UserRoles
+                .FirstOrDefaultAsync(x => x.RoleID == roleID && x.UserID == guid);
+            return userRole;
+        }
+
         /// <summary>
         /// Checks if user is in specific role
         /// </summary>
@@ -83,24 +96,10 @@ namespace UserService.Services.Data
             return userRole != null;
         }
 
-        /// <summary>
-        /// Won't be implemented, use <see cref=""/> and <see cref="CreateAsync"/> instead
-        /// </summary>
-        [Obsolete("Won't be implemented, use Delete/Create functions instead")]
-        public async Task<bool> UpdateAsync(UserRole entity)
+        public async Task<bool> UserIsInRoleAsync(string publicID, int roleID)
         {
-            await Task.Run(() => null); // dummy
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Won't be implemented, use <see cref="DeleteAsync"/> instead
-        /// </summary>
-        [Obsolete("Won't be implemened, use DeleteRoleFromUserAsync instead")]
-        public async Task<bool> DeleteAsync(int id)
-        {
-            await Task.Run(() => null);
-            throw new NotImplementedException();
+            var userRole = await GetUserInRoleAsync(publicID, roleID);
+            return userRole != null;
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace UserService.Services.Data
         /// <param name="publicID">User Public ID (GUID)</param>
         /// <param name="role">Role name</param>
         /// <returns>True on success</returns>
-        public async Task<bool> DeleteRoleFromUserAsync(string publicID, string role)
+        public async Task<bool> RevokeRoleFromUserAsync(string publicID, string role)
         {
             var userRole = await GetUserInRoleAsync(publicID, role);
             if (userRole != null)

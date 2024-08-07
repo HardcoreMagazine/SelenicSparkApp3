@@ -56,7 +56,7 @@ namespace UserService.Services.Application
 
             services.AddScoped<IRepository<User>, UserManager>();
             services.AddScoped<IRepository<Role>, RoleManager>();
-            services.AddScoped<IRepository<UserRole>, UserRolesManager>();
+            services.AddScoped<IUserRoleRepository<UserRole>, UserRolesManager>();
 
 
             services.AddAuthentication(opt =>

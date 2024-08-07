@@ -7,15 +7,8 @@ namespace UserService.Models.Data
     {
         [Key]
         public int ID { get; set; }
+        [Required]
         public string Name { get; set; }
-        public bool Enabled { get; set; }
-
-        public static bool Validate(Role role)
-        {
-            if (string.IsNullOrWhiteSpace(role.Name))
-                return false;
-            else
-                return true;
-        }
+        public bool Enabled { get; set; } = true;
     }
 }

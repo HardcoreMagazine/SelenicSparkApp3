@@ -12,10 +12,10 @@ namespace UserService.Models.Data
         public int ID { get; set; }
         [Key]
         public Guid PublicID { get; set; } = Guid.NewGuid();
-        [StringLength(maximumLength: MaxUsernameLen, MinimumLength = MinUsernameLen)]
+        [Required, StringLength(maximumLength: MaxUsernameLen, MinimumLength = MinUsernameLen)]
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; } = false;
         public DateTimeOffset DateJoin { get; set; } = DateTimeOffset.Now;

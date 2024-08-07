@@ -1,6 +1,5 @@
 ﻿using Generics.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using UserService.Data;
 using UserService.Models.Data;
 using UserService.Models.SharedDictionary;

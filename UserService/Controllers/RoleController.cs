@@ -1,94 +1,165 @@
+using Generics.Models;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Data;
 using UserService.Models.Data;
+using UserService.Models.SharedDictionary;
 
 namespace UserService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class RoleController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
         private readonly ILogger<RoleController> _logger;
+        private readonly IRepository<Role> _roleManager;
+        private readonly IUserRoleRepository<UserRole> _userRolesManager;
 
-        public RoleController(ILogger<RoleController> logger, AppDbContext appDbContext)
+        public RoleController(ILogger<RoleController> logger, IRepository<Role> roleMgr, IUserRoleRepository<UserRole> userRoleMgr)
         {
-            _appDbContext = appDbContext;
             _logger = logger;
+            _roleManager = roleMgr;
+            _userRolesManager = userRoleMgr;
+        }
+
+        #region Roles
+
+        [HttpPost]
+        public async Task<ActionResult> CreateRole(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return BadRequest();
+
+            try
+            {
+                var role = new Role { Name = roleName };
+                var result = await _roleManager.CreateAsync(role);
+                if (result == (int)EntityCreateResponses.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Exists");
+                }
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpGet]
-        public IEnumerable<Role> Get()
+        public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
         {
             try
             {
-                return _appDbContext.Roles.Where(r => r.Enabled).ToList();
+                var roles = await _roleManager.GetAllAsync();
+                return Ok(roles.ToList());
             }
             catch (Npgsql.PostgresException ex)
             {
                 _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return new List<Role>();
+                return Ok(new List<Role>());
             }
-            catch (Exception ex)
+            catch (Exception)// ex)
             {
-                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return new List<Role>();
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return Ok(new List<Role>());
             }
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteRole(int id)
+        {
+            try
+            {
+                var result = await _roleManager.DeleteAsync(id);
+                if (result)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        #endregion
+
+        #region UserRoles
 
         [HttpPost]
-        public int CreateRole(Role role)
+        public async Task<ActionResult> GrantRoleToUser([FromBody] UserRole userRole)
         {
-            if (!Role.Validate(role) || !role.Enabled)
-                return (int)SharedLibCS.StatusCodes.ClientFail; // bad request body
+            var userAlreadyInRole = await _userRolesManager
+                .UserIsInRoleAsync(userRole.UserID.ToString(), userRole.RoleID);
 
-            try
+            if (userAlreadyInRole)
             {
-                _appDbContext.Roles.Add(role);
-                _appDbContext.SaveChanges();
-                return (int)SharedLibCS.StatusCodes.Ok;
+                return BadRequest();
             }
-            catch (Npgsql.PostgresException ex)
+            else
             {
-                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                return (int)SharedLibCS.StatusCodes.ServerFail;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                return (int)SharedLibCS.StatusCodes.ServerFail;
-            }
-        }
-
-        [HttpDelete]
-        public int Delete(int id)
-        {
-            var role = _appDbContext.Roles.FirstOrDefault(r => r.ID == id && r.Enabled);
-
-            if (role != null && Role.Validate(role))
-            {
-                role.Enabled = false;
                 try
                 {
-                    _appDbContext.Roles.Update(role);
-                    _appDbContext.SaveChanges();
-                    return (int)SharedLibCS.StatusCodes.Ok;
+                    var result = await _userRolesManager.GrantRoleToUserAsync(userRole);
+                    if (result)
+                        return Ok();
+                    else
+                        return BadRequest();
                 }
                 catch (Npgsql.PostgresException ex)
                 {
                     _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-                catch (Exception ex)
+                catch (Exception)// ex)
                 {
-                    _logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
-                    return (int)SharedLibCS.StatusCodes.ServerFail;
+                    //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-            }
-            else
-            {
-                return (int)SharedLibCS.StatusCodes.ClientFail;
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserRole>>> GetUserRoles(string publicID)
+        {
+            try
+            {
+                var userRoles = await _userRolesManager.GetAllUserRolesAsync(publicID);
+                if (userRoles.Count > 0)
+                    return Ok(userRoles.ToList());
+                else
+                    return NotFound();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        #endregion
     }
 }
