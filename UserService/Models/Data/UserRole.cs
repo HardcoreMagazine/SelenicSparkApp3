@@ -7,7 +7,8 @@ namespace UserService.Models.Data
     {
         [Key]
         public int ID { get; set; }
-        public Guid UsertID { get; set; }
+        [Required]
+        public string UserID { get; set; }
         public int RoleID { get; set; }
     }
 }
