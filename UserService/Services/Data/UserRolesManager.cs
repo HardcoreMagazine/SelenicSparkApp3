@@ -54,7 +54,7 @@ namespace UserService.Services.Data
         {
             // we do this the easy way
             var roleID = (await _appDbContext.Roles
-                .FirstOrDefaultAsync(r => r.Name.Equals(role, StringComparison.InvariantCultureIgnoreCase)))
+                .FirstOrDefaultAsync(r => r.Enabled && r.Name.Equals(role, StringComparison.InvariantCultureIgnoreCase)))
                 ?.ID;
 
             if (roleID != null)
