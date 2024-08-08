@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Models.Data;
-using UserService.Models.SharedDictionary;
 using UserService.Services.Security;
 
 namespace UserService.Services.Data
@@ -15,10 +14,6 @@ namespace UserService.Services.Data
             _appDbContext = appDbContext;
         }
 
-        /// <summary>
-        /// Register new user IF selected email and username is not in use
-        /// </summary>
-        /// <returns>Fixed response code, see: <see cref="EntityCreateResponses"/></returns>
         public async Task<string?> RegisterAsync(string username, string email, string password)
         {
             var userByName = await GetUserByNameAsync(username);

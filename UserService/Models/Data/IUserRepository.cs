@@ -9,6 +9,12 @@ namespace UserService.Models.Data
         /// </summary>
         /// <returns>Null on success, user-readable String on fail</returns>
         Task<string?> RegisterAsync(string username, string email, string password);
+        /// <summary>
+        /// Authenticates user if login (email) and password is correct
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns>String-token on success, Null on fail</returns>
         Task<string?> LoginAsync(string email, string password);
         Task<IReadOnlyCollection<T>> GetAllUsersAsync();
         Task<T?> GetUserAsync(string publicID);

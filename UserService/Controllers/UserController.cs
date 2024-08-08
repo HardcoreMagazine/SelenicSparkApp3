@@ -49,6 +49,7 @@ namespace UserService.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody] LoginUserRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.login) || string.IsNullOrWhiteSpace(req.password))
@@ -83,8 +84,7 @@ namespace UserService.Controllers
         [HttpPost]
         public async Task<ActionResult> Logout()
         {
-            await Task.FromResult(0); // dummy
-            return Ok();
+            throw new NotImplementedException();
         }
 
         [HttpGet]
@@ -107,6 +107,34 @@ namespace UserService.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> GetUser(string publicID)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> UpdateUsername(string publicID, string password, string username)
+        {
+            throw new NotImplementedException();
+        }
 
+        [HttpPost]
+        public async Task<ActionResult> UpdateEmail(string publicID, string password, string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdatePassword(string publicID, string currentPassword, string newPassword)
+        {
+            throw new NotImplementedException(); 
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteUser(string publicID, string password)
+        {
+            throw new NotImplementedException(); 
+        }
     }
 }
