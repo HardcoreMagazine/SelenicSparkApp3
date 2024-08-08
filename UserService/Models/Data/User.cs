@@ -20,7 +20,7 @@ namespace UserService.Models.Data
         public bool EmailConfirmed { get; set; } = false;
         public DateTimeOffset DateJoin { get; set; } = DateTimeOffset.Now;
         public bool Enabled { get; set; } = true;
-
+        
         public static bool Validate(User user)
         {
             return !string.IsNullOrWhiteSpace(user.Email)

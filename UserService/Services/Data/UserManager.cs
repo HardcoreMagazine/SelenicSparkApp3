@@ -1,12 +1,12 @@
-﻿using Generics.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Models.Data;
 using UserService.Models.SharedDictionary;
+using UserService.Services.Security;
 
 namespace UserService.Services.Data
 {
-    public class UserManager : IRepository<User>
+    public class UserManager : IUserRepository<User>
     {
         private readonly AppDbContext _appDbContext;
         
@@ -19,27 +19,48 @@ namespace UserService.Services.Data
         /// Register new user IF selected email and username is not in use
         /// </summary>
         /// <returns>Fixed response code, see: <see cref="EntityCreateResponses"/></returns>
-        public async Task<int> CreateAsync(User entity)
+        public async Task<string?> RegisterAsync(string username, string email, string password)
         {
-            var userByName = await GetByUsernameAsync(entity.Username);
+            var userByName = await GetUserByNameAsync(username);
             if (userByName != null)
             {
-                return (int)EntityCreateResponses.UsernameInUse;
+                return "Selected Username is already in use";
             }
 
-            var userByEmail = await GetByEmailAsync(entity.Email);
+            var userByEmail = await GetUserByEmailAsync(email);
             if (userByEmail != null)
             {
-                return (int)EntityCreateResponses.EmailInUse;
+                return "Selected Email is already in use";
             }
-            
-            await _appDbContext.Users.AddAsync(entity);
+
+            var user = new User()
+            {
+                Username = username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Email = email
+            };
+
+            await _appDbContext.Users.AddAsync(user);
             await SaveChangesAsync();
 
-            return (int)EntityCreateResponses.Success;
+            return null;
         }
 
-        public async Task<IReadOnlyCollection<User>> GetAllAsync()
+        public async Task<string?> LoginAsync(string email, string password)
+        {
+            var user = await GetUserByEmailAsync(email);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            {
+                string token = JwtTokenManager.GenerateUserToken(user);
+                return token;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<IReadOnlyCollection<User>> GetAllUsersAsync()
         {
             return await _appDbContext.Users
                 .Where(x => x.Enabled)
@@ -47,45 +68,34 @@ namespace UserService.Services.Data
                 .ToListAsync();
         }
 
-        public async Task<User?> GetAsync(int id)
-        {
-            return await _appDbContext.Users.FirstOrDefaultAsync(x => x.ID == id && x.Enabled);
-        }
-
-        public async Task<User?> GetByPublicIdAsync(string publicID)
+        public async Task<User?> GetUserAsync(string publicID)
         {
             var guid = Guid.Parse(publicID);
-            return await _appDbContext.Users.FirstOrDefaultAsync(x => x.PublicID == guid && x.Enabled);
+            return await _appDbContext.Users
+                .FirstOrDefaultAsync(x => x.PublicID == guid && x.Enabled);
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetUserByNameAsync(string username)
+        {
+            return await _appDbContext.Users
+                .FirstOrDefaultAsync(x => x.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase) && x.Enabled);
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
             email = email.ToLower();
             return await _appDbContext.Users
                 .FirstOrDefaultAsync(x => x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase) && x.Enabled);
         }
 
-        public async Task<User?> GetByUsernameAsync(string username)
+        public async Task<bool> UpdateUserUsernameAsync(string publicID, string password, string username)
         {
-            return await _appDbContext.Users.FirstOrDefaultAsync(x => x.Username == username && x.Enabled);
-        }
-
-        /// <summary>
-        /// Updates user's username and email. 
-        /// Important Note: these changes must be separated on frontend part
-        /// </summary>
-        /// <returns>True on success</returns>
-        public async Task<bool> UpdateAsync(User entity)
-        {
-            var existingUser = await GetByPublicIdAsync(entity.PublicID.ToString());
-            if (existingUser != null)
+            var user = await GetUserAsync(publicID);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                existingUser.Username = entity.Username;
-                existingUser.Email = entity.Email;
-
-                _appDbContext.Users.Update(existingUser);
-                await _appDbContext.SaveChangesAsync();
-
+                user.Username = username;
+                _appDbContext.Users.Update(user);
+                await SaveChangesAsync();
                 return true;
             }
             else
@@ -94,10 +104,26 @@ namespace UserService.Services.Data
             }
         }
 
-        public async Task<bool> UpdatePasswordAsync(string publicID, string oldPassword, string newPassword)
+        public async Task<bool> UpdateUserEmailAsync(string publicID, string password, string email)
         {
-            var user = await GetByPublicIdAsync(publicID);
-            if (user != null && BCrypt.Net.BCrypt.Verify(oldPassword, user.PasswordHash))
+            var user = await GetUserAsync(publicID);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            {
+                user.Email = email.ToLower();
+                _appDbContext.Users.Update(user);
+                await SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserPasswordAsync(string publicID, string currentPassword, string newPassword)
+        {
+            var user = await GetUserAsync(publicID);
+            if (user != null && BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 _appDbContext.Update(user);
@@ -111,32 +137,12 @@ namespace UserService.Services.Data
         }
 
         /// <summary>
-        /// This method is obsolete, use <see cref="DeleteByPublicID"/> instead
-        /// </summary>
-        [Obsolete("This method doesn't perform any validation/checks, use DeleteByPublicID instead")]
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var user = await GetAsync(id);
-            if (user != null)
-            {
-                user.Enabled = false;
-                _appDbContext.Users.Update(user);
-                await _appDbContext.SaveChangesAsync();
-                return true;
-            }
-            else
-        {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Disables user without deleting database entry, uses password validation/check
+        /// Disables User without deleting database entry, uses password validation/check
         /// </summary>
         /// <returns>True on success</returns>
-        public async Task<bool> DeleteByPublicID(string publicID, string password)
+        public async Task<bool> DeleteUserAsync(string publicID, string password)
         {
-            var user = await GetByPublicIdAsync(publicID);
+            var user = await GetUserAsync(publicID);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 user.Enabled = false;

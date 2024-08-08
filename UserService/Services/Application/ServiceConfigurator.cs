@@ -54,7 +54,7 @@ namespace UserService.Services.Application
                 opt.UseNpgsql(configuration.GetConnectionString("Default"));
             });
 
-            services.AddScoped<IRepository<User>, UserManager>();
+            services.AddScoped<IUserRepository<User>, UserManager>();
             services.AddScoped<IRepository<Role>, RoleManager>();
             services.AddScoped<IUserRoleRepository<UserRole>, UserRolesManager>();
 
