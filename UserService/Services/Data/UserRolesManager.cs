@@ -22,7 +22,8 @@ namespace UserService.Services.Data
         {
             var roleExists = await _appDbContext.Roles
                 .FirstOrDefaultAsync(x=> x.Enabled && x.ID == entity.RoleID);
-            if (roleExists == null) 
+
+            if (roleExists != null) 
                 return false;
 
             var ur = await _appDbContext.UserRoles
@@ -111,6 +112,21 @@ namespace UserService.Services.Data
         public async Task<bool> RevokeRoleFromUserAsync(string publicID, string role)
         {
             var userRole = await GetUserInRoleAsync(publicID, role);
+            if (userRole != null)
+            {
+                _appDbContext.UserRoles.Remove(userRole);
+                await SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RevokeRoleFromUserAsync(string publicID, int roleID)
+        {
+            var userRole = await GetUserInRoleAsync(publicID, roleID);
             if (userRole != null)
             {
                 _appDbContext.UserRoles.Remove(userRole);

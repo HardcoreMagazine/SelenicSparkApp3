@@ -107,33 +107,24 @@ namespace UserService.Controllers
         [HttpPost]
         public async Task<ActionResult> GrantRoleToUser([FromBody] UserRole userRole)
         {
-            var userAlreadyInRole = await _userRolesManager
-                .UserIsInRoleAsync(userRole.UserID.ToString(), userRole.RoleID);
-
-            if (userAlreadyInRole)
+            try
             {
-                return BadRequest();
+                // user-role validation performed on data Manager side
+                var result = await _userRolesManager.GrantRoleToUserAsync(userRole);
+                if (result)
+                    return Ok();
+                else
+                    return BadRequest();
             }
-            else
+            catch (Npgsql.PostgresException ex)
             {
-                try
-                {
-                    var result = await _userRolesManager.GrantRoleToUserAsync(userRole);
-                    if (result)
-                        return Ok();
-                    else
-                        return BadRequest();
-                }
-                catch (Npgsql.PostgresException ex)
-                {
-                    _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-                catch (Exception)// ex)
-                {
-                    //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -158,6 +149,17 @@ namespace UserService.Controllers
                 //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> RevokeRoleFromUser([FromBody] UserRole userRole)
+        {
+            var result = await _userRolesManager
+                .RevokeRoleFromUserAsync(userRole.UserID.ToString(), userRole.RoleID);
+            if (result)
+                return Ok();
+            else
+                return NotFound();
         }
 
         #endregion

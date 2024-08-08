@@ -12,6 +12,7 @@ namespace UserService.Models.Data
         Task<bool> UserIsInRoleAsync(string publicID, string role);
         Task<bool> UserIsInRoleAsync(string publicID, int roleID);
         Task<bool> RevokeRoleFromUserAsync(string publicID, string role);
+        Task<bool> RevokeRoleFromUserAsync(string publicID, int roleID);
         Task SaveChangesAsync();
     }
 }
