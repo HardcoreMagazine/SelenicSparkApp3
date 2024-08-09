@@ -43,7 +43,7 @@ namespace UserService.Controllers
             }
             catch (Exception)// ex)
             {
-                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -76,7 +76,7 @@ namespace UserService.Controllers
             }
             catch (Exception)// ex)
             {
-                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -102,39 +102,149 @@ namespace UserService.Controllers
             }
             catch (Exception)// ex)
             {
-                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex.Message} | SRC: {ex.StackTrace}");
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetUser(string publicID)
+        {
+            if (string.IsNullOrWhiteSpace(publicID))
+                return BadRequest();
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(publicID);
+                if (user != null)
+                    return Ok(user);
+                else
+                    return NotFound();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> UpdateUsername([FromBody] UpdateUserPropertyRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.publicID) 
+                || string.IsNullOrWhiteSpace(req.password) 
+                || string.IsNullOrWhiteSpace(req.newPropertyValue))
+                return BadRequest();
+            
+            try
+            {
+                var res = await _userManager
+                    .UpdateUserUsernameAsync(req.publicID, req.password, req.newPropertyValue);
+                if (res)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetUser(string publicID)
+        public async Task<ActionResult> UpdateEmail([FromBody] UpdateUserPropertyRequest req)
         {
-            throw new NotImplementedException();
-        }
-        
-        [HttpPost]
-        public async Task<ActionResult> UpdateUsername(string publicID, string password, string username)
-        {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(req.publicID)
+                || string.IsNullOrWhiteSpace(req.password)
+                || string.IsNullOrWhiteSpace(req.newPropertyValue))
+                return BadRequest();
+
+            try
+            {
+                var res = await _userManager
+                    .UpdateUserEmailAsync(req.publicID, req.password, req.newPropertyValue);
+                if (res)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateEmail(string publicID, string password, string email)
+        public async Task<ActionResult> UpdatePassword([FromBody] UpdateUserPropertyRequest req)
         {
-            throw new NotImplementedException();
-        }
+            if (string.IsNullOrWhiteSpace(req.publicID)
+                || string.IsNullOrWhiteSpace(req.password)
+                || string.IsNullOrWhiteSpace(req.newPropertyValue))
+                return BadRequest();
 
-        [HttpPost]
-        public async Task<ActionResult> UpdatePassword(string publicID, string currentPassword, string newPassword)
-        {
-            throw new NotImplementedException(); 
+            try
+            {
+                var res = await _userManager
+                    .UpdateUserPasswordAsync(req.publicID, req.password, req.newPropertyValue);
+                if (res)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteUser(string publicID, string password)
+        public async Task<ActionResult> DeleteUser([FromBody] DeleteUserRequest req)
         {
-            throw new NotImplementedException(); 
+            if (string.IsNullOrWhiteSpace(req.publicID) || string.IsNullOrWhiteSpace(req.password))
+                return BadRequest();
+
+            try
+            {
+                var res = await _userManager
+                    .DeleteUserAsync(req.publicID, req.password);
+                if (res)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                _logger.LogError($"{DateTimeOffset.Now} - ERROR: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)// ex)
+            {
+                //_logger.LogWarning($"{DateTimeOffset.Now} - WARN: {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

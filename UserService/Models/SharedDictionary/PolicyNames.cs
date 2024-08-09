@@ -8,6 +8,6 @@
         public const string AppUser = "User";
         public const string AppAdmin = "Admin";
         // the hardest part:
-        public const string AppContentOwner = "ContentOwner";
+        public const string AppClaimOwner = "ClaimOwner";
     }
 }
