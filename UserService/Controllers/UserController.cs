@@ -6,7 +6,7 @@ using UserService.Models.DTO;
 namespace UserService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
