@@ -84,7 +84,8 @@ namespace UserService.Controllers
         [HttpPost]
         public async Task<ActionResult> Logout()
         {
-            throw new NotImplementedException();
+            await Task.FromResult(0); // dummy
+            return Ok();
         }
 
         [HttpGet]
