@@ -50,7 +50,7 @@ namespace UserService.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody] LoginUserRequest req)
+        public async Task<ActionResult<LoginUserReply>> Login([FromBody] LoginUserRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.login) || string.IsNullOrWhiteSpace(req.password))
             {
@@ -59,10 +59,20 @@ namespace UserService.Controllers
 
             try
             {
+                // Yes, we are doing user query twice
+                // No, we don't have decode tools in our frontend project to get publicID property from JWT token
+                // but if we did this check would be unnecessary and should be removed
+                // further investigation needed
+                var user = await _userManager.GetUserByEmailAsync(req.login);
+                if (user == null)
+                {
+                    return BadRequest("Bad credentials");
+                }
+
                 var token = await _userManager.LoginAsync(req.login, req.password);
                 if (token != null)
                 {
-                    return Ok(token);
+                    return Ok(new LoginUserReply(user.PublicID.ToString(), token));
                 }
                 else
                 {
