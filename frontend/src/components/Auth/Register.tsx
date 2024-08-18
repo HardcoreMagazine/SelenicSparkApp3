@@ -16,7 +16,7 @@ function Register() {
                     <label className="flex items-center h-5">
                     <input type="checkbox" className="w-4 h-4 border rounded focus:ring-primary-600" required={true} />
                       <span className="ml-2 text-sm select-none">
-                        I agree to <Link to="/privacy" target="_blank">privacy terms</Link> and <Link to="/tos" target="_blank">terms of service</Link>
+                        I agree to <Link to="/privacy">privacy terms</Link> and <Link to="/tos">terms of service</Link>
                       </span>
                     </label>
                   </div>

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
 import { useParams } from "react-router-dom";
-import { ApiService } from '../Shared/Scriprs/ApiService';
-import { ApiEndpoints } from "../Shared/Scriprs/EApiEndpoints";
-import { HttpMethods } from "../Shared/Scriprs/EHttpMethods";
+import { ApiService } from '../Shared/Scripts/ApiService';
+import { ApiEndpoints } from "../Shared/Scripts/ApiEndpoints";
+import { BasicHttpMethods } from "../Shared/Scripts/HttpMethods";
 // import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
 // import { formatDtString } from "../Shared/FuncFormatDtString";
 
@@ -36,7 +36,7 @@ function EditPost() {
     
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
-      method: HttpMethods.PUT,
+      method: BasicHttpMethods.PUT,
       body: jsonData,
       afterHandler: afterCreateHandler
     });
@@ -97,7 +97,7 @@ function EditPost() {
     //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     const data: IPost = await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
-      method: HttpMethods.GET,
+      method: BasicHttpMethods.GET,
       params: `/${id}`
     });
     

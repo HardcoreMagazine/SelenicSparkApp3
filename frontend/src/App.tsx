@@ -9,11 +9,11 @@ import Signin from './components/Auth/SignIn'
 import Register from './components/Auth/Register'
 import ResetPassword from './components/Auth/ResetPassword'
 
-import Posts from './components/Posts/Posts'
-import Post from './components/Posts/Post'
-import CreatePost from './components/Posts/CreatePost'
-import DeletePost from './components/Posts/DeletePost'
-import EditPost from './components/Posts/EditPost'
+import Posts from './components/Post/Posts'
+import Post from './components/Post/Post'
+import CreatePost from './components/Post/CreatePost'
+import DeletePost from './components/Post/DeletePost'
+import EditPost from './components/Post/EditPost'
 
 function App() {
   return (

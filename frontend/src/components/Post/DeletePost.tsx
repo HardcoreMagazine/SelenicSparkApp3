@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
-import { formatDtString } from '../Shared/Scriprs/FuncFormatDtString'
+import { formatDtString } from '../Shared/Scripts/FuncFormatDtString'
 import { Link } from 'react-router-dom'
 //import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
-import { ApiService } from '../Shared/Scriprs/ApiService';
-import { ApiEndpoints } from '../Shared/Scriprs/EApiEndpoints'
-import { HttpMethods } from '../Shared/Scriprs/EHttpMethods'
+import { ApiService } from '../Shared/Scripts/ApiService';
+import { ApiEndpoints } from '../Shared/Scripts/ApiEndpoints'
+import { BasicHttpMethods } from '../Shared/Scripts/HttpMethods'
 
 function DeletePost() {
   const { id } = useParams();
@@ -66,7 +66,7 @@ function DeletePost() {
   async function populateData() {
     const data: IPost = await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
-      method: HttpMethods.GET,
+      method: BasicHttpMethods.GET,
       params: `/${id}`
     })
     //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
@@ -81,7 +81,7 @@ function DeletePost() {
     //afterDeleteHandler(data);
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
-      method: HttpMethods.DELETE,
+      method: BasicHttpMethods.DELETE,
       params: `/?id=${id}`,
       afterHandler: afterDeleteHandler
     });

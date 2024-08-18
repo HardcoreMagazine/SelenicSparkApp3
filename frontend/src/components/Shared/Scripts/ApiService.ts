@@ -1,10 +1,11 @@
-import { ApiEndpoints } from './EApiEndpoints'
-import { HttpMethods } from './EHttpMethods';
-import { StatusCodes } from './EStatusCodes'
+import { ApiEndpoints } from './ApiEndpoints'
+import { BasicHttpMethods } from './HttpMethods';
+import { ApiEndpointActions } from './ApiEndpointActions';
 
 interface IApiRequest {
   endpoint: ApiEndpoints;
-  method: HttpMethods;
+  action: ApiEndpointActions;
+  method: BasicHttpMethods;
   params?: string;
   body?: any;
   afterHandler?: (response: any) => void;
@@ -13,24 +14,25 @@ interface IApiRequest {
 export class ApiService {
   private static async handleResponse(res: Response): Promise<any> {
     switch (res.status) {
-      case 400: // bad request
-        return StatusCodes.ClientFail;
-      case 500: // internal server err
-        return StatusCodes.ServerFail;
-      default: // blindly guessing response code will be "200/OK" in all other cases
+      case 200:
         const resData = await res.json();
         return resData;
+      default:
+        return "EPIC FAIL";
     }
   }
 
   public static async handleRequest(request: IApiRequest): Promise<any> {
     let url: string;
 
-    if (request.params) {
-      url = `${request.endpoint}${request.params}`;
+    if (!request.action) {
+      url = request.endpoint;
+    }
+    else if (!request.params) {
+      url = `${request.endpoint}${request.action}`;
     }
     else {
-      url = request.endpoint;
+      url = `${request.endpoint}${request.action}${request.params}`;
     }
 
     const response = await fetch(url, {

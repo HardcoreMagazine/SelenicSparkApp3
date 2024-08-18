@@ -62,7 +62,7 @@ namespace UserService.Controllers
                 // Yes, we are doing user query twice
                 // No, we don't have decode tools in our frontend project to get publicID property from JWT token
                 // but if we did this check would be unnecessary and should be removed
-                // further investigation needed
+                // further investigation neededz
                 var user = await _userManager.GetUserByEmailAsync(req.login);
                 if (user == null)
                 {

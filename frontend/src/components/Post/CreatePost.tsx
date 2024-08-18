@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
-import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
-import { ApiService } from "../Shared/Scriprs/ApiService";
-import { ApiEndpoints } from "../Shared/Scriprs/EApiEndpoints";
-import { HttpMethods } from "../Shared/Scriprs/EHttpMethods";
+import { sendReq } from "../Shared/Scripts/FuncApiCallHandler";
+import { ApiService } from "../Shared/Scripts/ApiService";
+import { ApiEndpoints } from "../Shared/Scripts/ApiEndpoints";
+import { BasicHttpMethods } from "../Shared/Scripts/HttpMethods";
 
 function CreatePost() {
   // this will allow to auto-resize textarea HTML element
@@ -43,7 +43,7 @@ function CreatePost() {
     
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
-      method: HttpMethods.POST,
+      method: BasicHttpMethods.POST,
       body: jsonData,
       afterHandler: afterCreateHandler
     })

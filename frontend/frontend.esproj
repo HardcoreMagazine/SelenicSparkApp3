@@ -16,6 +16,6 @@
     <None Remove=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\components\Users\" />
+    <Folder Include="src\components\User\" />
   </ItemGroup>
 </Project>
