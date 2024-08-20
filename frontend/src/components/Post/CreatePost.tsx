@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import { IPost } from './IPost'
-import { sendReq } from "../Shared/Scripts/FuncApiCallHandler";
 import { ApiService } from "../Shared/Scripts/ApiService";
 import { ApiEndpoints } from "../Shared/Scripts/ApiEndpoints";
 import { BasicHttpMethods } from "../Shared/Scripts/HttpMethods";
+import { ApiEndpointActions } from "../Shared/Scripts/ApiEndpointActions";
 
 function CreatePost() {
   // this will allow to auto-resize textarea HTML element
   // kudos to github.com/codewgi
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [txt, setTxt] = useState<string>();
-  // needed by law, otherwise browser renders read-only input
+  // required, otherwise browser renders read-only input
   const txtChangeHandler = (e) => {
     setTxt(e.target.value);
   };
@@ -31,29 +31,20 @@ function CreatePost() {
       formData[e.target[i].name] = e.target[i].value;
     }
     const jsonData = JSON.stringify(formData);
-    
-    // const data: number = await sendReq("https://localhost:46801/post", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: jsonData
-    // });
-    // afterCreateHandler(data);
-    
+       
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
+      action: ApiEndpointActions.PostCreateNew,
       method: BasicHttpMethods.POST,
       body: jsonData,
       afterHandler: afterCreateHandler
     })
   }
 
-  const afterCreateHandler = (responseCode: number) => {
-    if (responseCode > 0) {
-      window.location.replace(`/post/${responseCode}`);
+  const afterCreateHandler = (id: number) => {
+    if (id > 0) {
+      window.location.replace(`/post/${id}`);
     }
-    // else: parse error
   }
   
   return (

@@ -29,7 +29,7 @@ function Posts() {
     // set update interval
     const timer = setInterval(() => {
       populateCollection();
-    }, 30*1000);
+    }, 180*1000);
     return () => clearInterval(timer);
   }, [populateCollection]); // update state after each interval
 
@@ -80,18 +80,6 @@ function Posts() {
       </div>
     </>
   );
-
-  // async function populateCollection() {
-  //   const data: IPost[] = await ApiService.handleRequest({
-  //     endpoint: ApiEndpoints.Post,
-  //     action: ApiEndpointActions.PostGetAll,
-  //     method: BasicHttpMethods.GET
-  //   });
-    
-  //   data.forEach(post => post.dateCreated = formatDtString(post.dateCreated));
-  //   setPosts(data);
-  // }
-
 }
 
 export default Posts;

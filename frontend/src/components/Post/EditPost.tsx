@@ -4,8 +4,7 @@ import { useParams } from "react-router-dom";
 import { ApiService } from '../Shared/Scripts/ApiService';
 import { ApiEndpoints } from "../Shared/Scripts/ApiEndpoints";
 import { BasicHttpMethods } from "../Shared/Scripts/HttpMethods";
-// import { sendReq } from "../Shared/Scriprs/FuncApiCallHandler";
-// import { formatDtString } from "../Shared/FuncFormatDtString";
+import { ApiEndpointActions } from "../Shared/Scripts/ApiEndpointActions";
 
 function EditPost() {
   const { id } = useParams();
@@ -24,19 +23,10 @@ function EditPost() {
     }
     const jsonData = JSON.stringify(formData);
 
-    // const res = await fetch("https://localhost:46801/post", {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: jsonData
-    // });
-    // const data = await res.json();
-    //afterCreateHandler(data);
-    
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
       method: BasicHttpMethods.PUT,
+      action: ApiEndpointActions.PostUpdate,
       body: jsonData,
       afterHandler: afterCreateHandler
     });
@@ -46,7 +36,6 @@ function EditPost() {
     if (responseCode > 0) {
       window.location.replace(`/post/${responseCode}`);
     }
-    //else process error - ?
   };
 
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -94,9 +83,9 @@ function EditPost() {
   );
 
   async function populateData() {
-    //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     const data: IPost = await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
+      action: ApiEndpointActions.PostUpdate,
       method: BasicHttpMethods.GET,
       params: `/${id}`
     });

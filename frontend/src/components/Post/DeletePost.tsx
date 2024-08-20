@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom'
 import { IPost } from './IPost'
 import { formatDtString } from '../Shared/Scripts/FuncFormatDtString'
 import { Link } from 'react-router-dom'
-//import { sendReq } from '../Shared/Scriprs/FuncApiCallHandler'
 import { ApiService } from '../Shared/Scripts/ApiService';
 import { ApiEndpoints } from '../Shared/Scripts/ApiEndpoints'
 import { BasicHttpMethods } from '../Shared/Scripts/HttpMethods'
+import { ApiEndpointActions } from '../Shared/Scripts/ApiEndpointActions'
 
 function DeletePost() {
   const { id } = useParams();
@@ -17,10 +17,8 @@ function DeletePost() {
     populateData();
   }, []);
 
-  const afterDeleteHandler = (responseCode: number) => {
-    if (responseCode == 0) {
-      window.location.replace(`/posts`);
-    }
+  const afterDeleteHandler = () => {
+    window.location.replace(`/posts`);
   }
 
   const mainPageContent = post === undefined ? (
@@ -66,21 +64,18 @@ function DeletePost() {
   async function populateData() {
     const data: IPost = await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
+      action: ApiEndpointActions.PostGetID,
       method: BasicHttpMethods.GET,
       params: `/${id}`
     })
-    //const data: IPost = await sendReq(`https://localhost:46801/post/${id}`);
     data.dateCreated = formatDtString(data.dateCreated);
     setPost(data);
   }
 
   async function commitDeletion() {
-    // const data: number = await sendReq(`https://localhost:46801/post/?id=${id}`, {
-    //   method: "DELETE",
-    // });
-    //afterDeleteHandler(data);
     await ApiService.handleRequest({
       endpoint: ApiEndpoints.Post,
+      action: ApiEndpointActions.PostDelete,
       method: BasicHttpMethods.DELETE,
       params: `/?id=${id}`,
       afterHandler: afterDeleteHandler
